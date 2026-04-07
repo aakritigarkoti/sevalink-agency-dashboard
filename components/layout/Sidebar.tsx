@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 
 type SidebarProps = {
   onNavigate?: () => void;
+  isCollapsed?: boolean;
 };
 
 const navItems = [
@@ -15,20 +16,20 @@ const navItems = [
   { label: "Earnings", href: "/earnings" },
 ];
 
-export function Sidebar({ onNavigate }: SidebarProps) {
+export function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname();
 
   return (
-    <div className="h-full w-64 bg-gray-900 px-4 pt-3 pb-5 text-white">
-      <div className="-ml-2 -mt-1 mb-7">
-        <Link href="/" className="inline-block" onClick={onNavigate}>
+    <div className="flex h-full flex-col overflow-hidden bg-background px-3 py-4 text-foreground">
+      <div className={`mb-7 ${isCollapsed ? "md:flex md:justify-center" : "-ml-1"}`}>
+        <Link href="/" className="inline-flex" onClick={onNavigate}>
           <Image
             src="/SevaLink-logo-r.png"
             alt="SevaLink"
             width={120}
             height={32}
             priority
-            className="h-auto w-[96px]"
+            className={`h-auto transition-all duration-300 ${isCollapsed ? "w-[42px] md:block" : "w-[102px]"}`}
           />
         </Link>
       </div>
@@ -42,13 +43,19 @@ export function Sidebar({ onNavigate }: SidebarProps) {
               <Link
                 href={item.href}
                 onClick={onNavigate}
-                className={`block rounded-xl border-l-2 px-3 py-2.5 text-sm font-medium transition-all duration-300 ease-in-out ${
+                className={`flex items-center rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-300 ease-in-out ${
                   isActive
-                    ? "border-yellow-300 bg-white/15 text-yellow-300 shadow-sm"
-                    : "border-transparent text-white/90 hover:translate-x-0.5 hover:bg-white/10 hover:text-yellow-300"
+                    ? "bg-muted text-foreground shadow-sm"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
+                title={isCollapsed ? item.label : undefined}
               >
-                {item.label}
+                <span className={`${isCollapsed ? "md:hidden" : "inline"}`}>
+                  {item.label}
+                </span>
+                <span className={`${isCollapsed ? "hidden md:inline" : "hidden"}`}>
+                  {item.label.charAt(0)}
+                </span>
               </Link>
             </li>
           );

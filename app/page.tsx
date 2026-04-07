@@ -59,9 +59,9 @@ const topServices = [
 ];
 
 const statusStyles: Record<RecentBookingStatus, string> = {
-  Pending: "bg-yellow-100 text-yellow-800 ring-yellow-200",
-  Confirmed: "bg-blue-100 text-blue-800 ring-blue-200",
-  "In Progress": "bg-purple-100 text-purple-800 ring-purple-200",
+  Pending: "bg-muted text-muted-foreground ring-border",
+  Confirmed: "bg-primary/10 text-primary ring-primary/25",
+  "In Progress": "bg-card text-foreground ring-border",
 };
 
 export default function Home() {
@@ -209,13 +209,17 @@ export default function Home() {
 
   return (
     <LayoutWrapper>
-      <section className="space-y-7 lg:space-y-8">
-        <div className="space-y-1">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Overview</h1>
-          <p className="text-sm text-gray-500 sm:text-base">Homecare operations snapshot for bookings, providers, and revenue.</p>
+      <section className="space-y-6 lg:space-y-7">
+        <div className="space-y-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Overview
+          </h1>
+          <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
+            Homecare operations snapshot for bookings, providers, and revenue.
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:gap-4 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
           {stats.map((stat, index) => (
             <div
               key={stat.title}
@@ -224,8 +228,8 @@ export default function Home() {
               }}
               data-card-index={index}
               style={{ transitionDelay: `${index * 80}ms` }}
-              className={`h-full transition-all duration-500 ease-in-out ${
-                visibleCards[index] ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+              className={`transition-all duration-500 ease-in-out ${
+                visibleCards[index] ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
               }`}
             >
               <StatsCard
@@ -238,67 +242,65 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-5">
+          <div
+            ref={servicesSectionRef}
+            data-section="services"
+            className={`rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-500 ease-in-out sm:p-5 xl:col-span-2 ${
+              visibleSections.services ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+            }`}
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold text-card-foreground">Service Distribution</h2>
+              <span className="text-xs font-medium text-muted-foreground">Top booked services</span>
+            </div>
 
-        <div
-          ref={servicesSectionRef}
-          data-section="services"
-          className={`rounded-2xl border border-white/60 bg-white/80 p-5 shadow-sm backdrop-blur-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:shadow-lg sm:p-6 ${
-            visibleSections.services ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
-          }`}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Service Distribution</h2>
-            <span className="text-xs font-medium text-gray-500">Top booked services</span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-            {topServices.map((service) => (
-              <article
-                key={service.name}
-                className="rounded-2xl border border-gray-100/80 bg-white/75 p-4 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <p className="text-sm font-semibold text-gray-900">{service.name}</p>
-                <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900">{service.bookings}</p>
-                <p className="mt-1 text-xs text-gray-500">{service.note}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
-
-        <div
-          ref={recentSectionRef}
-          data-section="recent"
-          style={{ transitionDelay: "120ms" }}
-          className={`rounded-2xl border border-white/60 bg-white/80 p-5 shadow-sm backdrop-blur-sm transition-all duration-500 ease-in-out hover:-translate-y-0.5 hover:shadow-lg sm:p-6 ${
-            visibleSections.recent ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
-          }`}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Bookings</h2>
-            <span className="text-xs font-medium text-gray-500">Last 24 hours</span>
-          </div>
-
-          <div className="space-y-3">
-            {recentBookings.map((booking) => (
-              <div
-                key={booking.patientName}
-                className="flex flex-col gap-3 rounded-2xl border border-gray-100/80 bg-white/80 p-4 shadow-sm transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-md sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div>
-                  <p className="text-sm font-semibold text-gray-900">{booking.patientName}</p>
-                  <p className="text-sm text-gray-500">{booking.service}</p>
-                </div>
-
-                <span
-                  className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[booking.status]}`}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-1">
+              {topServices.map((service) => (
+                <article
+                  key={service.name}
+                  className="rounded-xl border border-border bg-muted/35 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:bg-muted/55"
                 >
-                  {booking.status}
-                </span>
-              </div>
-            ))}
+                  <p className="text-sm font-semibold text-card-foreground">{service.name}</p>
+                  <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">{service.bookings}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{service.note}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div
+            ref={recentSectionRef}
+            data-section="recent"
+            style={{ transitionDelay: "120ms" }}
+            className={`rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-500 ease-in-out sm:p-5 xl:col-span-3 ${
+              visibleSections.recent ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
+            }`}
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold text-card-foreground">Recent Bookings</h2>
+              <span className="text-xs font-medium text-muted-foreground">Last 24 hours</span>
+            </div>
+
+            <div className="space-y-3">
+              {recentBookings.map((booking) => (
+                <div
+                  key={booking.patientName}
+                  className="flex flex-col gap-3 rounded-xl border border-border bg-muted/20 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-semibold text-card-foreground">{booking.patientName}</p>
+                    <p className="text-sm text-muted-foreground">{booking.service}</p>
+                  </div>
+
+                  <span
+                    className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[booking.status]}`}
+                  >
+                    {booking.status}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

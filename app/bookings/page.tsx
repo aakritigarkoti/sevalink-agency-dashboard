@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { Button } from "@/components/ui/button";
 
 type BookingStatus = "Pending" | "Confirmed" | "In Progress" | "Completed";
 
@@ -132,10 +133,10 @@ const initialBookings: Booking[] = [
 ];
 
 const statusStyles: Record<BookingStatus, string> = {
-  Pending: "bg-yellow-100 text-yellow-800 ring-yellow-200",
-  Confirmed: "bg-blue-100 text-blue-800 ring-blue-200",
-  "In Progress": "bg-purple-100 text-purple-800 ring-purple-200",
-  Completed: "bg-green-100 text-green-800 ring-green-200",
+  Pending: "bg-muted text-muted-foreground ring-border",
+  Confirmed: "bg-primary/10 text-primary ring-primary/25",
+  "In Progress": "bg-card text-foreground ring-border",
+  Completed: "bg-primary/15 text-primary ring-primary/30",
 };
 
 export default function BookingsPage() {
@@ -206,9 +207,9 @@ export default function BookingsPage() {
   return (
     <LayoutWrapper>
       <section className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">Bookings</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Bookings</h1>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
           <div className="mb-5 grid grid-cols-1 gap-3 lg:grid-cols-12">
             <div className="lg:col-span-4">
               <input
@@ -216,7 +217,7 @@ export default function BookingsPage() {
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Search by patient name..."
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 outline-none ring-blue-500 placeholder:text-gray-400 focus:ring-2"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 placeholder:text-muted-foreground focus:ring-2"
               />
             </div>
 
@@ -224,7 +225,7 @@ export default function BookingsPage() {
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-blue-500 focus:ring-2"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
               >
                 <option value="All">All Statuses</option>
                 <option value="Pending">Pending</option>
@@ -238,7 +239,7 @@ export default function BookingsPage() {
               <select
                 value={serviceFilter}
                 onChange={(event) => setServiceFilter(event.target.value as ServiceFilter)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-blue-500 focus:ring-2"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
               >
                 {serviceFilterOptions.map((service) => (
                   <option key={service} value={service}>
@@ -253,25 +254,25 @@ export default function BookingsPage() {
                 type="date"
                 value={dateFilter}
                 onChange={(event) => setDateFilter(event.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-blue-500 focus:ring-2"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
               />
             </div>
 
             <div className="lg:col-span-1">
-              <button
-                type="button"
+              <Button
                 onClick={resetFilters}
-                className="w-full rounded-lg bg-gray-200 px-3 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300"
+                variant="secondary"
+                className="w-full"
               >
                 Reset
-              </button>
+              </Button>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-gray-700">
+            <table className="min-w-full text-left text-sm text-muted-foreground">
               <thead>
-                <tr className="border-b border-gray-200 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <tr className="border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   <th className="px-4 py-3">Patient Name</th>
                   <th className="px-4 py-3">Service Type</th>
                   <th className="px-4 py-3">Duration</th>
@@ -288,20 +289,20 @@ export default function BookingsPage() {
                   filteredBookings.map((booking) => (
                     <tr
                       key={booking.id}
-                      className="border-b border-gray-100 transition-colors hover:bg-gray-50"
+                      className="border-b border-border/70 transition-colors hover:bg-muted/25"
                     >
-                      <td className="px-4 py-4 font-medium text-gray-900">
+                      <td className="px-4 py-4 font-medium text-foreground">
                         {booking.patientName}
                       </td>
                       <td className="px-4 py-4">{booking.serviceType}</td>
                       <td className="px-4 py-4 whitespace-nowrap">{booking.duration}</td>
                       <td className="px-4 py-4 whitespace-nowrap">{booking.dateTime}</td>
-                      <td className="px-4 py-4 whitespace-nowrap font-semibold text-gray-900">{booking.price}</td>
+                      <td className="px-4 py-4 whitespace-nowrap font-semibold text-foreground">{booking.price}</td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         {booking.assignedProvider ? (
-                          <span className="font-medium text-gray-900">{booking.assignedProvider}</span>
+                          <span className="font-medium text-foreground">{booking.assignedProvider}</span>
                         ) : (
-                          <span className="text-gray-500">Not Assigned</span>
+                          <span className="text-muted-foreground">Not Assigned</span>
                         )}
                       </td>
                       <td className="px-4 py-4">
@@ -312,20 +313,20 @@ export default function BookingsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-4">
-                        <button
-                          type="button"
+                        <Button
                           onClick={() => openAssignModal(booking.id)}
                           disabled={Boolean(booking.assignedProvider)}
-                          className="rounded-lg px-3 py-2 text-xs font-semibold text-white transition-colors disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-600 enabled:bg-gray-900 enabled:hover:bg-gray-700"
+                          size="sm"
+                          variant={booking.assignedProvider ? "secondary" : "default"}
                         >
                           {booking.assignedProvider ? "Assigned" : "Assign Provider"}
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-gray-500">
+                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
                       No bookings found.
                     </td>
                   </tr>
@@ -337,30 +338,30 @@ export default function BookingsPage() {
       </section>
 
       {activeBooking ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4 transition-opacity duration-200">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl transition-all duration-200">
-            <h2 className="text-xl font-semibold text-gray-900">Assign Provider</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/45 p-4 transition-opacity duration-200">
+          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl transition-all duration-200">
+            <h2 className="text-xl font-semibold text-foreground">Assign Provider</h2>
 
-            <div className="mt-4 space-y-2 rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm">
+            <div className="mt-4 space-y-2 rounded-xl border border-border bg-muted/35 p-4 text-sm">
               <p>
-                <span className="font-medium text-gray-900">Patient Name:</span>{" "}
-                <span className="text-gray-700">{activeBooking.patientName}</span>
+                <span className="font-medium text-foreground">Patient Name:</span>{" "}
+                <span className="text-muted-foreground">{activeBooking.patientName}</span>
               </p>
               <p>
-                <span className="font-medium text-gray-900">Service Type:</span>{" "}
-                <span className="text-gray-700">{activeBooking.serviceType}</span>
+                <span className="font-medium text-foreground">Service Type:</span>{" "}
+                <span className="text-muted-foreground">{activeBooking.serviceType}</span>
               </p>
             </div>
 
             <div className="mt-4">
-              <label htmlFor="provider-select" className="mb-2 block text-sm font-medium text-gray-900">
+              <label htmlFor="provider-select" className="mb-2 block text-sm font-medium text-foreground">
                 Select Provider
               </label>
               <select
                 id="provider-select"
                 value={selectedProvider}
                 onChange={(event) => setSelectedProvider(event.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none ring-blue-500 focus:ring-2"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
               >
                 <option value="">Choose a provider</option>
                 {providerOptions.map((provider) => (
@@ -372,21 +373,18 @@ export default function BookingsPage() {
             </div>
 
             <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
+              <Button
                 onClick={closeAssignModal}
-                className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-300"
+                variant="secondary"
               >
                 Cancel
-              </button>
-              <button
-                type="button"
+              </Button>
+              <Button
                 onClick={handleConfirmAssign}
                 disabled={!selectedProvider}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
               >
                 Confirm Assign
-              </button>
+              </Button>
             </div>
           </div>
         </div>

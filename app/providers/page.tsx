@@ -1,4 +1,6 @@
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 type AvailabilityStatus = "Available" | "Busy";
 
@@ -109,8 +111,8 @@ const providers: Provider[] = [
 ];
 
 const availabilityStyles: Record<AvailabilityStatus, string> = {
-  Available: "bg-green-100 text-green-800 ring-green-200",
-  Busy: "bg-red-100 text-red-700 ring-red-200",
+  Available: "bg-primary/15 text-primary ring-primary/30",
+  Busy: "bg-muted text-muted-foreground ring-border",
 };
 
 function getInitials(name: string) {
@@ -129,29 +131,29 @@ export default function ProvidersPage() {
       <section className="space-y-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Providers</h1>
-            <p className="mt-1 text-sm text-gray-600">Manage assigned professionals and availability.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Providers</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Manage assigned professionals and availability.</p>
           </div>
-          <div className="rounded-full bg-white px-3 py-1 text-sm font-medium text-gray-700 ring-1 ring-gray-200">
+          <div className="rounded-full border border-border bg-card px-3 py-1 text-sm font-medium text-foreground">
             Total Providers: {providers.length}
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {providers.map((provider) => (
-            <article
+            <Card
               key={provider.id}
-              className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-gray-300 hover:shadow-lg sm:p-6"
+              className="p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-6"
             >
               <div className="mb-4 flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
-                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-semibold text-gray-700">
+                  <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
                     {getInitials(provider.name)}
                   </span>
 
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900">{provider.name}</h2>
-                    <p className="text-sm font-medium text-gray-600">{provider.role}</p>
+                    <h2 className="text-lg font-semibold text-card-foreground">{provider.name}</h2>
+                    <p className="text-sm font-medium text-muted-foreground">{provider.role}</p>
                   </div>
                 </div>
 
@@ -162,28 +164,28 @@ export default function ProvidersPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-2 text-sm text-gray-700">
+              <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
                 <p>
-                  <span className="font-medium text-gray-900">Specialization:</span>{" "}
+                  <span className="font-medium text-foreground">Specialization:</span>{" "}
                   {provider.specialization}
                 </p>
                 <p>
-                  <span className="font-medium text-gray-900">Experience:</span>{" "}
+                  <span className="font-medium text-foreground">Experience:</span>{" "}
                   {provider.experience}
                 </p>
                 <p>
-                  <span className="font-medium text-gray-900">Rating:</span>{" "}
-                  <span className="text-amber-500">★</span> {provider.rating}
+                  <span className="font-medium text-foreground">Rating:</span>{" "}
+                  <span className="text-primary">★</span> {provider.rating}
                 </p>
               </div>
 
               <div className="mt-4">
-                <p className="mb-2 text-sm font-medium text-gray-900">Services Offered</p>
+                <p className="mb-2 text-sm font-medium text-foreground">Services Offered</p>
                 <div className="flex flex-wrap gap-2">
                   {provider.services.map((service) => (
                     <span
                       key={service}
-                      className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700"
+                      className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
                     >
                       {service}
                     </span>
@@ -191,13 +193,10 @@ export default function ProvidersPage() {
                 </div>
               </div>
 
-              <button
-                type="button"
-                className="mt-5 w-full rounded-lg bg-gray-900 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-gray-700"
-              >
+              <Button variant="default" className="mt-5 w-full">
                 View Details
-              </button>
-            </article>
+              </Button>
+            </Card>
           ))}
         </div>
       </section>

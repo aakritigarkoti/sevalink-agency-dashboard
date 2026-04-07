@@ -1,4 +1,5 @@
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { Card } from "@/components/ui/card";
 
 type PaymentStatus = "Paid" | "Pending";
 
@@ -88,8 +89,8 @@ const earningsData: EarningRow[] = [
 ];
 
 const statusStyles: Record<PaymentStatus, string> = {
-  Paid: "bg-green-100 text-green-800 ring-green-200",
-  Pending: "bg-yellow-100 text-yellow-800 ring-yellow-200",
+  Paid: "bg-primary/15 text-primary ring-primary/30",
+  Pending: "bg-muted text-muted-foreground ring-border",
 };
 
 const totalRevenue = earningsData.reduce((sum, row) => sum + row.amount, 0);
@@ -110,48 +111,48 @@ export default function EarningsPage() {
     <LayoutWrapper>
       <section className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Earnings &amp; Revenue</h1>
-          <p className="mt-1 text-sm text-gray-600">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Earnings &amp; Revenue</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Financial snapshot of completed homecare bookings and pending collections.
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight text-gray-900">₹{totalRevenue.toLocaleString("en-IN")}</p>
-            <p className="mt-1 text-xs text-gray-500">Across all listed bookings</p>
-          </article>
+          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
+            <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+            <p className="mt-3 text-3xl font-bold tracking-tight text-card-foreground">₹{totalRevenue.toLocaleString("en-IN")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Across all listed bookings</p>
+          </Card>
 
-          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-gray-600">This Month Revenue</p>
-            <p className="mt-3 text-2xl font-bold tracking-tight text-gray-900">₹{thisMonthRevenue.toLocaleString("en-IN")}</p>
-            <p className="mt-1 text-xs text-gray-500">April 2026 collections</p>
-          </article>
+          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
+            <p className="text-sm font-medium text-muted-foreground">This Month Revenue</p>
+            <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">₹{thisMonthRevenue.toLocaleString("en-IN")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">April 2026 collections</p>
+          </Card>
 
-          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-gray-600">Completed Bookings</p>
-            <p className="mt-3 text-2xl font-bold tracking-tight text-gray-900">{completedBookings}</p>
-            <p className="mt-1 text-xs text-gray-500">Payments successfully received</p>
-          </article>
+          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
+            <p className="text-sm font-medium text-muted-foreground">Completed Bookings</p>
+            <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">{completedBookings}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Payments successfully received</p>
+          </Card>
 
-          <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-gray-600">Pending Payments</p>
-            <p className="mt-3 text-2xl font-bold tracking-tight text-gray-900">{pendingPayments}</p>
-            <p className="mt-1 text-xs text-gray-500">Require collection follow-up</p>
-          </article>
+          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
+            <p className="text-sm font-medium text-muted-foreground">Pending Payments</p>
+            <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">{pendingPayments}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Require collection follow-up</p>
+          </Card>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+        <Card className="p-4 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Earnings Table</h2>
-            <span className="text-xs font-medium text-gray-500">8 records</span>
+            <h2 className="text-lg font-semibold text-card-foreground">Earnings Table</h2>
+            <span className="text-xs font-medium text-muted-foreground">8 records</span>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-gray-700">
+            <table className="min-w-full text-left text-sm text-muted-foreground">
               <thead>
-                <tr className="border-b border-gray-200 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <tr className="border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   <th className="px-4 py-3">Booking ID</th>
                   <th className="px-4 py-3">Patient Name</th>
                   <th className="px-4 py-3">Service Type</th>
@@ -166,14 +167,14 @@ export default function EarningsPage() {
                 {earningsData.map((row) => (
                   <tr
                     key={row.bookingId}
-                    className="border-b border-gray-100 transition-colors hover:bg-gray-50"
+                    className="border-b border-border/70 transition-colors hover:bg-muted/25"
                   >
-                    <td className="px-4 py-4 font-semibold text-gray-900">{row.bookingId}</td>
+                    <td className="px-4 py-4 font-semibold text-foreground">{row.bookingId}</td>
                     <td className="px-4 py-4 whitespace-nowrap">{row.patientName}</td>
                     <td className="px-4 py-4 whitespace-nowrap">{row.serviceType}</td>
                     <td className="px-4 py-4 whitespace-nowrap">{row.providerName}</td>
                     <td className="px-4 py-4 whitespace-nowrap">{row.date}</td>
-                    <td className="px-4 py-4 whitespace-nowrap font-semibold text-gray-900">₹{row.amount.toLocaleString("en-IN")}</td>
+                    <td className="px-4 py-4 whitespace-nowrap font-semibold text-foreground">₹{row.amount.toLocaleString("en-IN")}</td>
                     <td className="px-4 py-4">
                       <span
                         className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[row.paymentStatus]}`}
@@ -186,29 +187,29 @@ export default function EarningsPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+        <Card className="p-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Recent Transactions</h2>
-            <span className="text-xs font-medium text-gray-500">Latest payouts</span>
+            <h2 className="text-lg font-semibold text-card-foreground">Recent Transactions</h2>
+            <span className="text-xs font-medium text-muted-foreground">Latest payouts</span>
           </div>
 
           <div className="space-y-3">
             {recentTransactions.map((txn) => (
               <div
                 key={txn.id}
-                className="flex flex-col gap-2 rounded-xl border border-gray-100 p-4 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center sm:justify-between"
+                className="flex flex-col gap-2 rounded-xl border border-border p-4 transition-colors hover:bg-muted/20 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">{txn.label}</p>
-                  <p className="text-xs text-gray-500">{txn.id} • {txn.time}</p>
+                  <p className="text-sm font-semibold text-card-foreground">{txn.label}</p>
+                  <p className="text-xs text-muted-foreground">{txn.id} • {txn.time}</p>
                 </div>
-                <p className="text-sm font-semibold text-gray-900">{txn.amount}</p>
+                <p className="text-sm font-semibold text-card-foreground">{txn.amount}</p>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
       </section>
     </LayoutWrapper>
   );
