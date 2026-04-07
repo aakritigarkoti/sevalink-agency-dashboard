@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import StatsCard from "@/components/dashboard/StatsCard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type RecentBookingStatus = "Pending" | "Confirmed" | "In Progress";
 
@@ -209,8 +210,8 @@ export default function Home() {
 
   return (
     <LayoutWrapper>
-      <section className="space-y-6 lg:space-y-7">
-        <div className="space-y-1.5">
+      <section className="space-y-6 lg:space-y-8">
+        <div className="space-y-2">
           <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Overview
           </h1>
@@ -219,7 +220,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 lg:gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-6">
           {stats.map((stat, index) => (
             <div
               key={stat.title}
@@ -242,51 +243,51 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-5">
-          <div
+        <div className="grid grid-cols-1 gap-5 xl:grid-cols-5">
+          <Card
             ref={servicesSectionRef}
             data-section="services"
-            className={`rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-500 ease-in-out sm:p-5 xl:col-span-2 ${
+            className={`animate-fade-up p-0 transition-all duration-500 ease-in-out xl:col-span-2 ${
               visibleSections.services ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
             }`}
           >
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-card-foreground">Service Distribution</h2>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 p-5 sm:p-6">
+              <CardTitle className="text-lg">Service Distribution</CardTitle>
               <span className="text-xs font-medium text-muted-foreground">Top booked services</span>
-            </div>
+            </CardHeader>
 
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 xl:grid-cols-1">
+            <CardContent className="grid grid-cols-1 gap-3 p-5 pt-0 sm:grid-cols-3 sm:p-6 sm:pt-0 xl:grid-cols-1">
               {topServices.map((service) => (
                 <article
                   key={service.name}
-                  className="rounded-xl border border-border bg-muted/35 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:bg-muted/55"
+                  className="rounded-2xl border border-border bg-muted/35 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:bg-muted/55"
                 >
                   <p className="text-sm font-semibold text-card-foreground">{service.name}</p>
                   <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">{service.bookings}</p>
                   <p className="mt-1 text-xs text-muted-foreground">{service.note}</p>
                 </article>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div
+          <Card
             ref={recentSectionRef}
             data-section="recent"
             style={{ transitionDelay: "120ms" }}
-            className={`rounded-2xl border border-border bg-card p-4 shadow-sm transition-all duration-500 ease-in-out sm:p-5 xl:col-span-3 ${
+            className={`animate-fade-up p-0 transition-all duration-500 ease-in-out xl:col-span-3 ${
               visibleSections.recent ? "translate-y-0 opacity-100" : "translate-y-5 opacity-0"
             }`}
           >
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold text-card-foreground">Recent Bookings</h2>
+            <CardHeader className="flex flex-row items-center justify-between gap-3 p-5 sm:p-6">
+              <CardTitle className="text-lg">Recent Bookings</CardTitle>
               <span className="text-xs font-medium text-muted-foreground">Last 24 hours</span>
-            </div>
+            </CardHeader>
 
-            <div className="space-y-3">
+            <CardContent className="space-y-3 p-5 pt-0 sm:p-6 sm:pt-0">
               {recentBookings.map((booking) => (
                 <div
                   key={booking.patientName}
-                  className="flex flex-col gap-3 rounded-xl border border-border bg-muted/20 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-3 rounded-2xl border border-border bg-muted/20 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:bg-muted/35 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
                     <p className="text-sm font-semibold text-card-foreground">{booking.patientName}</p>
@@ -300,8 +301,8 @@ export default function Home() {
                   </span>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
     </LayoutWrapper>

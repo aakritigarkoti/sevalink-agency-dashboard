@@ -24,7 +24,7 @@ export function LayoutWrapper({
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 transform border-r border-border bg-background text-foreground transition-all duration-300 md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 transform border-r border-border bg-background text-foreground shadow-[2px_0_10px_rgba(15,23,42,0.04)] transition-all duration-300 md:static md:translate-x-0 ${
           isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } ${isDesktopSidebarCollapsed ? "md:w-20" : "md:w-72"}`}
       >
@@ -43,7 +43,7 @@ export function LayoutWrapper({
           }
         />
         <main className="flex-1 overflow-x-clip px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-7">
-          {children}
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
         </main>
       </div>
     </div>

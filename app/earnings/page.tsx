@@ -117,27 +117,27 @@ export default function EarningsPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
-            <p className="mt-3 text-3xl font-bold tracking-tight text-card-foreground">₹{totalRevenue.toLocaleString("en-IN")}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Across all listed bookings</p>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          <Card className="animate-fade-up col-span-2 bg-primary p-4 text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:col-span-1 sm:p-5">
+            <p className="text-xs font-medium text-primary-foreground/85 sm:text-sm">Total Revenue</p>
+            <p className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">₹{totalRevenue.toLocaleString("en-IN")}</p>
+            <p className="mt-1 text-xs text-primary-foreground/80">Across all listed bookings</p>
           </Card>
 
-          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-muted-foreground">This Month Revenue</p>
+          <Card className="animate-fade-up p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
+            <p className="text-xs font-medium text-muted-foreground sm:text-sm">This Month Revenue</p>
             <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">₹{thisMonthRevenue.toLocaleString("en-IN")}</p>
             <p className="mt-1 text-xs text-muted-foreground">April 2026 collections</p>
           </Card>
 
-          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-muted-foreground">Completed Bookings</p>
+          <Card className="animate-fade-up p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
+            <p className="text-xs font-medium text-muted-foreground sm:text-sm">Completed Bookings</p>
             <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">{completedBookings}</p>
             <p className="mt-1 text-xs text-muted-foreground">Payments successfully received</p>
           </Card>
 
-          <Card className="p-5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-6">
-            <p className="text-sm font-medium text-muted-foreground">Pending Payments</p>
+          <Card className="animate-fade-up p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
+            <p className="text-xs font-medium text-muted-foreground sm:text-sm">Pending Payments</p>
             <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">{pendingPayments}</p>
             <p className="mt-1 text-xs text-muted-foreground">Require collection follow-up</p>
           </Card>
@@ -150,32 +150,34 @@ export default function EarningsPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-muted-foreground">
+            <table className="min-w-full text-left text-[13px] text-muted-foreground">
               <thead>
-                <tr className="border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  <th className="px-4 py-3">Booking ID</th>
-                  <th className="px-4 py-3">Patient Name</th>
-                  <th className="px-4 py-3">Service Type</th>
-                  <th className="px-4 py-3">Provider Name</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3">Amount</th>
-                  <th className="px-4 py-3">Payment Status</th>
+                <tr className="border-b border-border bg-muted/40 text-[11px] font-semibold text-foreground">
+                  <th className="px-4 py-3.5">Booking ID</th>
+                  <th className="px-4 py-3.5">Patient name</th>
+                  <th className="px-4 py-3.5">Service type</th>
+                  <th className="px-4 py-3.5">Provider name</th>
+                  <th className="px-4 py-3.5">Date</th>
+                  <th className="px-4 py-3.5 text-right">Amount</th>
+                  <th className="px-4 py-3.5">Payment status</th>
                 </tr>
               </thead>
 
               <tbody>
-                {earningsData.map((row) => (
+                {earningsData.map((row, index) => (
                   <tr
                     key={row.bookingId}
-                    className="border-b border-border/70 transition-colors hover:bg-muted/25"
+                    className={`border-b border-border/70 transition-colors hover:bg-muted/30 ${
+                      index % 2 === 0 ? "bg-background" : "bg-muted/15"
+                    }`}
                   >
-                    <td className="px-4 py-4 font-semibold text-foreground">{row.bookingId}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{row.patientName}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{row.serviceType}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{row.providerName}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{row.date}</td>
-                    <td className="px-4 py-4 whitespace-nowrap font-semibold text-foreground">₹{row.amount.toLocaleString("en-IN")}</td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3.5 font-semibold text-foreground">{row.bookingId}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">{row.patientName}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">{row.serviceType}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">{row.providerName}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap">{row.date}</td>
+                    <td className="px-4 py-3.5 whitespace-nowrap text-right font-semibold text-foreground">₹{row.amount.toLocaleString("en-IN")}</td>
+                    <td className="px-4 py-3.5">
                       <span
                         className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[row.paymentStatus]}`}
                       >
@@ -195,17 +197,17 @@ export default function EarningsPage() {
             <span className="text-xs font-medium text-muted-foreground">Latest payouts</span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {recentTransactions.map((txn) => (
               <div
                 key={txn.id}
-                className="flex flex-col gap-2 rounded-xl border border-border p-4 transition-colors hover:bg-muted/20 sm:flex-row sm:items-center sm:justify-between"
+                className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background p-3.5 transition-colors hover:bg-muted/20"
               >
-                <div>
-                  <p className="text-sm font-semibold text-card-foreground">{txn.label}</p>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-card-foreground">{txn.label}</p>
                   <p className="text-xs text-muted-foreground">{txn.id} • {txn.time}</p>
                 </div>
-                <p className="text-sm font-semibold text-card-foreground">{txn.amount}</p>
+                <p className="shrink-0 text-base font-semibold text-foreground">{txn.amount}</p>
               </div>
             ))}
           </div>

@@ -42,15 +42,15 @@ export function Header({
           </svg>
         </Button>
 
-        <h2 className="text-base font-semibold tracking-tight text-foreground sm:text-lg">
-          Agency Dashboard
-        </h2>
+        <div className="leading-tight">
+          <h2 className="text-base font-semibold text-foreground sm:text-lg">Agency Dashboard</h2>
+          <p className="text-xs text-muted-foreground sm:text-sm">
+            Manage your agency operations smoothly
+          </p>
+        </div>
       </div>
 
-      <div className="rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground sm:text-sm">
-        <span className="sm:hidden">Welcome</span>
-        <span className="hidden sm:inline">Welcome back, Agency Admin</span>
-      </div>
+      <p className="hidden text-sm text-muted-foreground md:block">Welcome, Admin</p>
     </header>
   );
 }

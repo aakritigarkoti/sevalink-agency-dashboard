@@ -143,17 +143,17 @@ export default function ProvidersPage() {
           {providers.map((provider) => (
             <Card
               key={provider.id}
-              className="p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-6"
+              className="p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-5"
             >
-              <div className="mb-4 flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-start gap-3">
                   <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground">
                     {getInitials(provider.name)}
                   </span>
 
-                  <div>
-                    <h2 className="text-lg font-semibold text-card-foreground">{provider.name}</h2>
-                    <p className="text-sm font-medium text-muted-foreground">{provider.role}</p>
+                  <div className="min-w-0">
+                    <h2 className="truncate text-base font-semibold text-card-foreground">{provider.name}</h2>
+                    <p className="text-xs font-medium text-muted-foreground">{provider.role}</p>
                   </div>
                 </div>
 
@@ -164,28 +164,30 @@ export default function ProvidersPage() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-2 text-sm text-muted-foreground">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-muted-foreground">
                 <p>
-                  <span className="font-medium text-foreground">Specialization:</span>{" "}
-                  {provider.specialization}
+                  <span className="block text-[11px] font-medium text-muted-foreground/90">Experience</span>
+                  <span className="text-sm font-medium text-foreground">{provider.experience}</span>
                 </p>
                 <p>
-                  <span className="font-medium text-foreground">Experience:</span>{" "}
-                  {provider.experience}
+                  <span className="block text-[11px] font-medium text-muted-foreground/90">Rating</span>
+                  <span className="text-sm font-medium text-foreground">
+                    <span className="text-primary">★</span> {provider.rating}
+                  </span>
                 </p>
-                <p>
-                  <span className="font-medium text-foreground">Rating:</span>{" "}
-                  <span className="text-primary">★</span> {provider.rating}
+                <p className="col-span-2">
+                  <span className="block text-[11px] font-medium text-muted-foreground/90">Specialization</span>
+                  <span className="text-sm text-foreground">{provider.specialization}</span>
                 </p>
               </div>
 
-              <div className="mt-4">
-                <p className="mb-2 text-sm font-medium text-foreground">Services Offered</p>
-                <div className="flex flex-wrap gap-2">
+              <div className="mt-3">
+                <p className="mb-2 text-xs font-medium text-muted-foreground">Services</p>
+                <div className="flex flex-wrap gap-1.5">
                   {provider.services.map((service) => (
                     <span
                       key={service}
-                      className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
+                      className="rounded-full border border-border bg-muted/40 px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
                     >
                       {service}
                     </span>
@@ -193,7 +195,7 @@ export default function ProvidersPage() {
                 </div>
               </div>
 
-              <Button variant="default" className="mt-5 w-full">
+              <Button variant="default" className="mt-4 w-full bg-foreground text-background hover:bg-foreground/90">
                 View Details
               </Button>
             </Card>

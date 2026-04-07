@@ -3,6 +3,7 @@
 import { useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 type BookingStatus = "Pending" | "Confirmed" | "In Progress" | "Completed";
 
@@ -206,12 +207,16 @@ export default function BookingsPage() {
 
   return (
     <LayoutWrapper>
-      <section className="space-y-6">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Bookings</h1>
+      <section className="space-y-8">
+        <div className="space-y-1.5">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Bookings</h1>
+          <p className="text-sm text-muted-foreground">Manage and assign service requests from one place.</p>
+        </div>
 
-        <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6">
-          <div className="mb-5 grid grid-cols-1 gap-3 lg:grid-cols-12">
-            <div className="lg:col-span-4">
+        <Card className="p-4 sm:p-6">
+          <p className="mb-3 text-sm font-medium text-foreground">Filters</p>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
+            <div className="md:col-span-12">
               <input
                 type="text"
                 value={searchQuery}
@@ -221,7 +226,7 @@ export default function BookingsPage() {
               />
             </div>
 
-            <div className="lg:col-span-2">
+            <div className="md:col-span-6 lg:col-span-4">
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
@@ -235,7 +240,7 @@ export default function BookingsPage() {
               </select>
             </div>
 
-            <div className="lg:col-span-3">
+            <div className="md:col-span-6 lg:col-span-4">
               <select
                 value={serviceFilter}
                 onChange={(event) => setServiceFilter(event.target.value as ServiceFilter)}
@@ -249,7 +254,7 @@ export default function BookingsPage() {
               </select>
             </div>
 
-            <div className="lg:col-span-2">
+            <div className="md:col-span-8 lg:col-span-3">
               <input
                 type="date"
                 value={dateFilter}
@@ -258,7 +263,7 @@ export default function BookingsPage() {
               />
             </div>
 
-            <div className="lg:col-span-1">
+            <div className="md:col-span-4 lg:col-span-1">
               <Button
                 onClick={resetFilters}
                 variant="secondary"
@@ -269,27 +274,31 @@ export default function BookingsPage() {
             </div>
           </div>
 
+          <div className="my-6 h-px bg-border" />
+
           <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-sm text-muted-foreground">
+            <table className="min-w-full text-left text-[13px] text-muted-foreground">
               <thead>
-                <tr className="border-b border-border text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  <th className="px-4 py-3">Patient Name</th>
-                  <th className="px-4 py-3">Service Type</th>
-                  <th className="px-4 py-3">Duration</th>
-                  <th className="px-4 py-3">Date &amp; Time</th>
-                  <th className="px-4 py-3">Price</th>
-                  <th className="px-4 py-3">Assigned Provider</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Action</th>
+                <tr className="border-b border-border bg-muted/40 text-[11px] font-semibold text-foreground">
+                  <th className="px-4 py-3.5">Patient name</th>
+                  <th className="px-4 py-3.5">Service type</th>
+                  <th className="px-4 py-3.5">Duration</th>
+                  <th className="px-4 py-3.5">Date &amp; time</th>
+                  <th className="px-4 py-3.5 text-right">Price</th>
+                  <th className="px-4 py-3.5">Assigned provider</th>
+                  <th className="px-4 py-3.5">Status</th>
+                  <th className="px-4 py-3.5">Action</th>
                 </tr>
               </thead>
 
               <tbody>
                 {filteredBookings.length > 0 ? (
-                  filteredBookings.map((booking) => (
+                  filteredBookings.map((booking, index) => (
                     <tr
                       key={booking.id}
-                      className="border-b border-border/70 transition-colors hover:bg-muted/25"
+                      className={`border-b border-border/70 transition-colors hover:bg-muted/35 ${
+                        index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                      }`}
                     >
                       <td className="px-4 py-4 font-medium text-foreground">
                         {booking.patientName}
@@ -297,7 +306,7 @@ export default function BookingsPage() {
                       <td className="px-4 py-4">{booking.serviceType}</td>
                       <td className="px-4 py-4 whitespace-nowrap">{booking.duration}</td>
                       <td className="px-4 py-4 whitespace-nowrap">{booking.dateTime}</td>
-                      <td className="px-4 py-4 whitespace-nowrap font-semibold text-foreground">{booking.price}</td>
+                      <td className="px-4 py-4 whitespace-nowrap text-right font-semibold text-foreground">{booking.price}</td>
                       <td className="px-4 py-4 whitespace-nowrap">
                         {booking.assignedProvider ? (
                           <span className="font-medium text-foreground">{booking.assignedProvider}</span>
@@ -334,7 +343,7 @@ export default function BookingsPage() {
               </tbody>
             </table>
           </div>
-        </div>
+        </Card>
       </section>
 
       {activeBooking ? (
