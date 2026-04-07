@@ -70,10 +70,12 @@ export function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
         </Link>
       </div>
 
-      <div className="mb-5 rounded-2xl border border-border bg-muted/20 px-3 py-3">
+      <div className={`mb-4 ${isCollapsed ? "md:hidden" : ""}`}>
         <p className="text-sm font-semibold text-foreground">Welcome, Admin</p>
-        <p className="text-xs text-muted-foreground">Care Agency Admin</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">Care Agency Admin</p>
       </div>
+
+      <div className="mb-4 h-px bg-border/70" />
 
       <ul className="space-y-2">
         {navItems.map((item) => {
