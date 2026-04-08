@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -162,6 +162,20 @@ export default function BookingsPage() {
     return matchesSearch && matchesStatus && matchesService && matchesDate;
   });
 
+  const calendarDays = useMemo(
+    () =>
+      [8, 9, 10, 11, 12, 13, 14].map((day) => {
+        const dateKey = `2026-04-${String(day).padStart(2, "0")}`;
+        const count = bookings.filter((booking) => booking.bookingDate === dateKey).length;
+
+        return {
+          day,
+          count,
+        };
+      }),
+    [bookings],
+  );
+
   function openAssignModal(bookingId: number) {
     setActiveBookingId(bookingId);
     setSelectedProvider("");
@@ -207,14 +221,14 @@ export default function BookingsPage() {
 
   return (
     <LayoutWrapper>
-      <section className="space-y-8">
+      <section className="space-y-6">
         <div className="space-y-1.5">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Bookings</h1>
-          <p className="text-sm text-muted-foreground">Manage and assign service requests from one place.</p>
+          <h1 className="text-xl font-semibold tracking-tight text-foreground">Bookings</h1>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Manage and assign service requests from one place.</p>
         </div>
 
-        <Card className="p-4 sm:p-6">
-          <p className="mb-3 text-sm font-medium text-foreground">Filters</p>
+        <Card className="p-4 transition-all duration-300 hover:shadow-md sm:p-6">
+          <p className="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">Filters</p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
             <div className="md:col-span-12">
               <input
@@ -276,8 +290,51 @@ export default function BookingsPage() {
 
           <div className="my-6 h-px bg-border" />
 
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-[13px] text-muted-foreground">
+          <div className="mb-6 rounded-2xl border border-border bg-muted/20 p-4 transition-all duration-300 hover:shadow-md sm:p-5">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold tracking-tight text-foreground">Calendar Booking View</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Week overview for confirmed and pending bookings</p>
+              </div>
+              <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-muted-foreground ring-1 ring-border">
+                Apr 2026
+              </span>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
+              {calendarDays.map((day) => (
+                <div
+                  key={day.day}
+                  className={`rounded-xl border p-3 transition-all duration-300 ${
+                    day.count > 0
+                      ? "border-primary/20 bg-primary/5 hover:shadow-md"
+                      : "border-border bg-background hover:bg-muted/40"
+                  }`}
+                >
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Apr</p>
+                  <div className="mt-1 flex items-end justify-between gap-2">
+                    <p className="text-lg font-semibold text-foreground">{day.day}</p>
+                    <span
+                      className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
+                        day.count > 0
+                          ? "bg-blue-600 text-white"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {day.count}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    {day.count > 0 ? "Bookings scheduled" : "No bookings"}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {filteredBookings.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-[13px] text-muted-foreground">
               <thead>
                 <tr className="border-b border-border bg-muted/40 text-[11px] font-semibold text-foreground">
                   <th className="px-4 py-3.5">Patient name</th>
@@ -292,57 +349,65 @@ export default function BookingsPage() {
               </thead>
 
               <tbody>
-                {filteredBookings.length > 0 ? (
-                  filteredBookings.map((booking, index) => (
-                    <tr
-                      key={booking.id}
-                      className={`border-b border-border/70 transition-colors hover:bg-muted/35 ${
-                        index % 2 === 0 ? "bg-background" : "bg-muted/20"
-                      }`}
-                    >
-                      <td className="px-4 py-4 font-medium text-foreground">
-                        {booking.patientName}
-                      </td>
-                      <td className="px-4 py-4">{booking.serviceType}</td>
-                      <td className="px-4 py-4 whitespace-nowrap">{booking.duration}</td>
-                      <td className="px-4 py-4 whitespace-nowrap">{booking.dateTime}</td>
-                      <td className="px-4 py-4 whitespace-nowrap text-right font-semibold text-foreground">{booking.price}</td>
-                      <td className="px-4 py-4 whitespace-nowrap">
-                        {booking.assignedProvider ? (
-                          <span className="font-medium text-foreground">{booking.assignedProvider}</span>
-                        ) : (
-                          <span className="text-muted-foreground">Not Assigned</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[booking.status]}`}
-                        >
-                          {booking.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4">
-                        <Button
-                          onClick={() => openAssignModal(booking.id)}
-                          disabled={Boolean(booking.assignedProvider)}
-                          size="sm"
-                          variant={booking.assignedProvider ? "secondary" : "default"}
-                        >
-                          {booking.assignedProvider ? "Assigned" : "Assign Provider"}
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={8} className="px-4 py-12 text-center text-sm text-muted-foreground">
-                      No bookings found.
+                {filteredBookings.map((booking, index) => (
+                  <tr
+                    key={booking.id}
+                    className={`border-b border-border/70 transition-colors hover:bg-muted/35 ${
+                      index % 2 === 0 ? "bg-background" : "bg-muted/20"
+                    }`}
+                  >
+                    <td className="px-4 py-4 font-medium text-foreground">
+                      {booking.patientName}
+                    </td>
+                    <td className="px-4 py-4">{booking.serviceType}</td>
+                    <td className="px-4 py-4 whitespace-nowrap">{booking.duration}</td>
+                    <td className="px-4 py-4 whitespace-nowrap">{booking.dateTime}</td>
+                    <td className="px-4 py-4 whitespace-nowrap text-right font-semibold text-foreground">{booking.price}</td>
+                    <td className="px-4 py-4 whitespace-nowrap">
+                      {booking.assignedProvider ? (
+                        <span className="font-medium text-foreground">{booking.assignedProvider}</span>
+                      ) : (
+                        <span className="text-muted-foreground">Not Assigned</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[booking.status]}`}
+                      >
+                        {booking.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4">
+                      <Button
+                        onClick={() => openAssignModal(booking.id)}
+                        disabled={Boolean(booking.assignedProvider)}
+                        size="sm"
+                        variant={booking.assignedProvider ? "secondary" : "default"}
+                      >
+                        {booking.assignedProvider ? "Assigned" : "Assign Provider"}
+                      </Button>
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
+          ) : (
+            <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-12 text-center">
+              <div className="max-w-sm space-y-3">
+                <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-background text-muted-foreground ring-1 ring-border">
+                  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                    <path d="M8 3v4M16 3v4M3 10h18" />
+                  </svg>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-foreground">No bookings yet</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Try adjusting search or filters to see matching bookings.</p>
+                </div>
+              </div>
+            </div>
+          )}
         </Card>
       </section>
 

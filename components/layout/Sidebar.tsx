@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { getStoredUser, type LocalUser } from "@/lib/local-auth";
 
 type SidebarProps = {
   onNavigate?: () => void;
@@ -12,7 +14,7 @@ type SidebarProps = {
 const navItems = [
   {
     label: "Dashboard",
-    href: "/",
+    href: "/dashboard",
     icon: (
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M3 13h8V3H3zM13 21h8v-6h-8zM13 11h8V3h-8zM3 21h8v-6H3z" />
@@ -26,6 +28,17 @@ const navItems = [
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="3" y="5" width="18" height="16" rx="2" />
         <path d="M8 3v4M16 3v4M3 10h18" />
+      </svg>
+    ),
+  },
+  {
+    label: "Pending Requests",
+    href: "/bookings/pending-requests",
+    isChild: true,
+    icon: (
+      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+        <path d="M12 7v5l3 3" />
+        <circle cx="12" cy="12" r="8" />
       </svg>
     ),
   },
@@ -54,11 +67,16 @@ const navItems = [
 
 export function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
   const pathname = usePathname();
+  const [user, setUser] = useState<LocalUser | null>(null);
+
+  useEffect(() => {
+    setUser(getStoredUser());
+  }, []);
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background px-3 py-4 text-foreground">
       <div className={`mb-5 ${isCollapsed ? "md:flex md:justify-center" : "-ml-1"}`}>
-        <Link href="/" className="inline-flex" onClick={onNavigate}>
+        <Link href="/dashboard" className="inline-flex" onClick={onNavigate}>
           <Image
             src="/SevaLink-logo-r.png"
             alt="SevaLink"
@@ -71,22 +89,24 @@ export function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
       </div>
 
       <div className={`mb-4 ${isCollapsed ? "md:hidden" : ""}`}>
-        <p className="text-sm font-semibold text-foreground">Welcome, Admin</p>
-        <p className="mt-0.5 text-xs text-muted-foreground">Care Agency Admin</p>
+        {user?.name ? <p className="text-sm font-semibold text-foreground">Welcome, {user.name}</p> : null}
+        <p className="mt-0.5 text-xs text-muted-foreground">{user?.agency || "Care Agency Dashboard"}</p>
       </div>
 
       <div className="mb-4 h-px bg-border/70" />
 
       <ul className="space-y-2">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = item.href === "/bookings"
+            ? pathname === item.href || pathname.startsWith("/bookings/")
+            : pathname === item.href;
 
           return (
             <li key={item.href}>
               <Link
                 href={item.href}
                 onClick={onNavigate}
-                className={`flex items-center gap-2.5 rounded-lg border-l-2 px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2.5 rounded-lg border-l-2 px-3 py-2 text-sm font-medium transition-all duration-200 ${item.isChild ? "ml-4" : ""} ${
                   isActive
                     ? "border-primary bg-muted text-foreground shadow-sm"
                     : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
