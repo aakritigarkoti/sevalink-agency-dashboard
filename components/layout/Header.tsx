@@ -32,7 +32,7 @@ export function Header({
   }
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-border bg-background/95 px-3 backdrop-blur transition-colors duration-300 sm:px-5 lg:px-8">
+    <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-border bg-card/95 px-3 backdrop-blur transition-colors duration-300 sm:px-5 lg:px-8">
       <div className="flex items-center gap-3">
         <Button
           type="button"

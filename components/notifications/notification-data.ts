@@ -15,6 +15,17 @@ export type NotificationItem = {
   type: NotificationType;
 };
 
+export const notificationTypeVariants: Record<
+  NotificationType,
+  "default" | "secondary" | "destructive" | "outline"
+> = {
+  "booking-request": "secondary",
+  "booking-accepted": "secondary",
+  "booking-rejected": "secondary",
+  "profile-update": "outline",
+  "system-alert": "default",
+};
+
 export const initialNotifications: NotificationItem[] = [
   {
     id: 1,

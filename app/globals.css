@@ -42,20 +42,6 @@
 
 html.dark {
   color-scheme: dark;
-  --background: #030712;
-  --foreground: #f3f4f6;
-  --card: #111827;
-  --card-foreground: #f3f4f6;
-  --muted: #111827;
-  --muted-foreground: #9ca3af;
-  --border: #1f2937;
-  --ring: #60a5fa;
-  --primary: #3b82f6;
-  --primary-foreground: #eff6ff;
-  --sidebar: #030712;
-  --sidebar-foreground: #f3f4f6;
-  --sidebar-accent: #111827;
-  --sidebar-accent-foreground: #f3f4f6;
 }
 
 @theme inline {
@@ -189,7 +175,7 @@ html {
 
 .thin-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: var(--border) transparent;
 }
 
 .thin-scrollbar::-webkit-scrollbar {
@@ -201,7 +187,7 @@ html {
 }
 
 .thin-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: var(--border);
   border-radius: 9999px;
 }
 

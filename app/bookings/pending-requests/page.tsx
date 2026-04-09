@@ -2,9 +2,18 @@
 
 import { useMemo, useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 type RequestStatus = "Pending" | "Confirmed" | "Rejected";
 type StatusFilter = "All" | RequestStatus;
@@ -19,6 +28,8 @@ type PendingRequest = {
   description: string;
   status: RequestStatus;
 };
+
+type PendingAction = "accept" | "reject";
 
 const filterOptions: StatusFilter[] = ["All", "Pending", "Confirmed", "Rejected"];
 
@@ -64,17 +75,20 @@ const initialRequests: PendingRequest[] = [
   },
 ];
 
-const statusStyles: Record<RequestStatus, string> = {
-  Pending: "bg-amber-500/12 text-amber-700 ring-amber-500/20",
-  Confirmed: "bg-emerald-500/12 text-emerald-700 ring-emerald-500/20",
-  Rejected: "bg-rose-500/12 text-rose-700 ring-rose-500/20",
+const statusVariants: Record<RequestStatus, "secondary" | "default" | "destructive"> = {
+  Pending: "secondary",
+  Confirmed: "default",
+  Rejected: "destructive",
 };
 
 export default function PendingRequestsPage() {
-  const { addToast } = useToast();
   const [requests, setRequests] = useState<PendingRequest[]>(initialRequests);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("Pending");
   const [animatingCardIds, setAnimatingCardIds] = useState<Set<number>>(new Set());
+  const [pendingAction, setPendingAction] = useState<{
+    requestId: number;
+    action: PendingAction;
+  } | null>(null);
 
   const filteredRequests = useMemo(
     () =>
@@ -93,20 +107,24 @@ export default function PendingRequestsPage() {
     [requests],
   );
 
-  function handleAccept(requestId: number) {
-    const shouldAccept = window.confirm("Accept this booking request?");
-
-    if (!shouldAccept) {
-      return;
-    }
-
+  function runAction(requestId: number, action: PendingAction) {
     setAnimatingCardIds((current) => new Set([...current, requestId]));
-    addToast("Booking Accepted Successfully", "success");
+
+    if (action === "accept") {
+      toast.success("Booking accepted successfully");
+    } else {
+      toast.error("Booking rejected");
+    }
 
     setTimeout(() => {
       setRequests((current) =>
         current.map((request) =>
-          request.id === requestId ? { ...request, status: "Confirmed" } : request,
+          request.id === requestId
+            ? {
+                ...request,
+                status: action === "accept" ? "Confirmed" : "Rejected",
+              }
+            : request,
         ),
       );
       setAnimatingCardIds((current) => {
@@ -117,38 +135,27 @@ export default function PendingRequestsPage() {
     }, 300);
   }
 
-  function handleReject(requestId: number) {
-    const shouldReject = window.confirm("Reject this booking request?");
-
-    if (!shouldReject) {
+  function handleConfirmAction() {
+    if (!pendingAction) {
       return;
     }
 
-    setAnimatingCardIds((current) => new Set([...current, requestId]));
-    addToast("Booking Rejected", "error");
-
-    setTimeout(() => {
-      setRequests((current) =>
-        current.map((request) =>
-          request.id === requestId ? { ...request, status: "Rejected" } : request,
-        ),
-      );
-      setAnimatingCardIds((current) => {
-        const updated = new Set(current);
-        updated.delete(requestId);
-        return updated;
-      });
-    }, 300);
+    runAction(pendingAction.requestId, pendingAction.action);
+    setPendingAction(null);
   }
+
+  const selectedRequest = pendingAction
+    ? requests.find((request) => request.id === pendingAction.requestId) ?? null
+    : null;
 
   const emptyMessage =
     statusFilter === "Pending"
-      ? "No pending requests"
-      : "No requests found for this filter";
+      ? "No data available"
+      : "No data available";
 
   return (
     <LayoutWrapper>
-      <section className="space-y-7">
+      <section className="space-y-6">
         <div className="space-y-1.5">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Pending Requests</h1>
           <p className="text-sm text-muted-foreground">
@@ -156,24 +163,21 @@ export default function PendingRequestsPage() {
           </p>
         </div>
 
-        <Card className="rounded-xl border-border p-4 shadow-sm hover:shadow-sm sm:p-5">
+        <Card className="rounded-xl border-border p-4 shadow-sm transition-all hover:shadow-md sm:p-5">
           <div className="flex flex-wrap items-center gap-2">
             {filterOptions.map((option) => {
               const isActive = statusFilter === option;
 
               return (
-                <button
+                <Button
                   key={option}
                   type="button"
                   onClick={() => setStatusFilter(option)}
-                  className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground"
-                  }`}
+                  size="sm"
+                  variant={isActive ? "default" : "secondary"}
                 >
                   {option}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -193,9 +197,9 @@ export default function PendingRequestsPage() {
                     <p className="text-base font-semibold text-foreground">{request.patientName}</p>
                     <p className="text-sm text-muted-foreground">{request.serviceType}</p>
                   </div>
-                  <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[request.status]}`}>
+                  <Badge variant={statusVariants[request.status]}>
                     {request.status}
-                  </span>
+                  </Badge>
                 </div>
 
                 <div className="mt-4 grid grid-cols-1 gap-2 text-sm text-muted-foreground sm:grid-cols-2">
@@ -218,17 +222,18 @@ export default function PendingRequestsPage() {
                 <div className="mt-5 grid grid-cols-1 gap-2 sm:flex sm:justify-end">
                   <Button
                     type="button"
-                    className="h-9 w-full bg-emerald-600 text-white hover:bg-emerald-700 sm:w-auto"
-                    onClick={() => handleAccept(request.id)}
+                    variant="default"
+                    className="h-9 w-full sm:w-auto"
+                    onClick={() => setPendingAction({ requestId: request.id, action: "accept" })}
                     disabled={request.status !== "Pending"}
                   >
                     Accept
                   </Button>
                   <Button
                     type="button"
-                    variant="outline"
-                    className="h-9 w-full border-rose-300 text-rose-600 hover:border-rose-400 hover:bg-rose-50 sm:w-auto"
-                    onClick={() => handleReject(request.id)}
+                    variant="destructive"
+                    className="h-9 w-full sm:w-auto"
+                    onClick={() => setPendingAction({ requestId: request.id, action: "reject" })}
                     disabled={request.status !== "Pending"}
                   >
                     Reject
@@ -238,7 +243,7 @@ export default function PendingRequestsPage() {
             ))}
           </div>
         ) : (
-          <Card className="rounded-xl border-border p-10 text-center shadow-sm hover:shadow-sm">
+          <Card className="rounded-xl border-border p-10 text-center shadow-sm transition-all hover:shadow-md">
             <div className="mx-auto mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground">
               <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                 <path d="M3 6h18" />
@@ -251,12 +256,12 @@ export default function PendingRequestsPage() {
           </Card>
         )}
 
-        <Card className="rounded-xl border-border p-4 shadow-sm hover:shadow-sm sm:p-5">
+        <Card className="rounded-xl border-border p-4 shadow-sm transition-all hover:shadow-md sm:p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-foreground">Active Bookings</h2>
-            <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            <Badge variant="secondary">
               {activeBookings.length} confirmed
-            </span>
+            </Badge>
           </div>
 
           <div className="mt-4 space-y-2.5">
@@ -276,6 +281,32 @@ export default function PendingRequestsPage() {
           </div>
         </Card>
       </section>
+
+      <Dialog open={Boolean(pendingAction)} onOpenChange={(open) => !open && setPendingAction(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {pendingAction?.action === "accept" ? "Confirm Accept" : "Confirm Reject"}
+            </DialogTitle>
+            <DialogDescription>
+              {selectedRequest
+                ? `Are you sure you want to ${pendingAction?.action} the request for ${selectedRequest.patientName}?`
+                : "Please confirm this action."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPendingAction(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant={pendingAction?.action === "reject" ? "destructive" : "default"}
+              onClick={handleConfirmAction}
+            >
+              {pendingAction?.action === "accept" ? "Accept" : "Reject"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </LayoutWrapper>
   );
 }

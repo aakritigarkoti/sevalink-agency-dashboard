@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export type ToastType = "success" | "error" | "info";
 
@@ -80,21 +81,18 @@ function ToastItem({
   toast: Toast;
   onRemove: (id: string) => void;
 }) {
-  const styles: Record<ToastType, { bg: string; text: string; icon: string }> =
+  const styles: Record<ToastType, { badge: string; icon: string }> =
     {
       success: {
-        bg: "bg-emerald-600",
-        text: "text-white",
+        badge: "bg-primary text-primary-foreground",
         icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
       },
       error: {
-        bg: "bg-rose-600",
-        text: "text-white",
+        badge: "bg-destructive text-destructive-foreground",
         icon: "M6 18L18 6M6 6l12 12",
       },
       info: {
-        bg: "bg-blue-600",
-        text: "text-white",
+        badge: "bg-secondary text-secondary-foreground",
         icon: "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
       },
     };
@@ -103,27 +101,31 @@ function ToastItem({
 
   return (
     <div
-      className={`animate-toast-in ${style.bg} ${style.text} flex items-center gap-3 rounded-lg px-4 py-3 shadow-lg transition-all duration-200`}
+      className="animate-toast-in flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-card-foreground shadow-lg transition-colors duration-300"
     >
-      <svg
-        viewBox="0 0 24 24"
-        className="h-5 w-5 shrink-0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        aria-hidden="true"
-      >
-        <path d={style.icon} />
-      </svg>
+      <span className={cn("inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md", style.badge)}>
+        <svg
+          viewBox="0 0 24 24"
+          className="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          aria-hidden="true"
+        >
+          <path d={style.icon} />
+        </svg>
+      </span>
       <p className="text-sm font-medium">{toast.message}</p>
-      <button
+      <Button
         type="button"
+        size="icon-xs"
+        variant="ghost"
         onClick={() => onRemove(toast.id)}
-        className="ml-auto shrink-0 text-2xl leading-none opacity-70 transition-opacity hover:opacity-100"
+        className="ml-auto"
         aria-label="Close notification"
       >
         ×
-      </button>
+      </Button>
     </div>
   );
 }

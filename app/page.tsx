@@ -19,7 +19,7 @@ export default function HomeRedirectPage() {
   }, [router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-dvh items-center justify-center bg-background transition-colors duration-300">
       <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary/30 border-t-primary" />
     </div>
   );

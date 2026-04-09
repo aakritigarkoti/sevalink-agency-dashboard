@@ -1,4 +1,5 @@
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
@@ -110,9 +111,9 @@ const providers: Provider[] = [
   },
 ];
 
-const availabilityStyles: Record<AvailabilityStatus, string> = {
-  Available: "bg-primary/15 text-primary ring-primary/30",
-  Busy: "bg-muted text-muted-foreground ring-border",
+const availabilityVariants: Record<AvailabilityStatus, "default" | "secondary"> = {
+  Available: "default",
+  Busy: "secondary",
 };
 
 function getInitials(name: string) {
@@ -134,9 +135,9 @@ export default function ProvidersPage() {
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Providers</h1>
             <p className="mt-1 text-sm text-muted-foreground">Manage assigned professionals and availability.</p>
           </div>
-          <div className="rounded-full border border-border bg-card px-3 py-1 text-sm font-medium text-foreground">
+          <Badge variant="outline" className="h-auto px-3 py-1 text-sm font-medium">
             Total Providers: {providers.length}
-          </div>
+          </Badge>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -157,11 +158,9 @@ export default function ProvidersPage() {
                   </div>
                 </div>
 
-                <span
-                  className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${availabilityStyles[provider.availability]}`}
-                >
+                <Badge variant={availabilityVariants[provider.availability]}>
                   {provider.availability}
-                </span>
+                </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm text-muted-foreground">
@@ -185,17 +184,18 @@ export default function ProvidersPage() {
                 <p className="mb-2 text-xs font-medium text-muted-foreground">Services</p>
                 <div className="flex flex-wrap gap-1.5">
                   {provider.services.map((service) => (
-                    <span
+                    <Badge
                       key={service}
-                      className="rounded-full border border-border bg-muted/40 px-2 py-0.5 text-[11px] font-medium text-muted-foreground"
+                      variant="outline"
+                      className="text-[11px]"
                     >
                       {service}
-                    </span>
+                    </Badge>
                   ))}
                 </div>
               </div>
 
-              <Button variant="default" className="mt-4 w-full bg-foreground text-background hover:bg-foreground/90">
+              <Button className="mt-4 w-full">
                 View Details
               </Button>
             </Card>

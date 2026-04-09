@@ -1,4 +1,5 @@
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
 type PaymentStatus = "Paid" | "Pending";
@@ -88,9 +89,9 @@ const earningsData: EarningRow[] = [
   },
 ];
 
-const statusStyles: Record<PaymentStatus, string> = {
-  Paid: "bg-primary/15 text-primary ring-primary/30",
-  Pending: "bg-muted text-muted-foreground ring-border",
+const statusVariants: Record<PaymentStatus, "default" | "secondary"> = {
+  Paid: "default",
+  Pending: "secondary",
 };
 
 const totalRevenue = earningsData.reduce((sum, row) => sum + row.amount, 0);
@@ -117,28 +118,40 @@ export default function EarningsPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4">
-          <Card className="animate-fade-up col-span-2 bg-primary p-4 text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md sm:col-span-1 sm:p-5">
-            <p className="text-xs font-medium text-primary-foreground/85 sm:text-sm">Total Revenue</p>
-            <p className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">₹{totalRevenue.toLocaleString("en-IN")}</p>
-            <p className="mt-1 text-xs text-primary-foreground/80">Across all listed bookings</p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-muted-foreground">Total Revenue</p>
+              <Badge variant="default">All time</Badge>
+            </div>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">₹{totalRevenue.toLocaleString("en-IN")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Across all listed bookings</p>
           </Card>
 
-          <Card className="animate-fade-up p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
-            <p className="text-xs font-medium text-muted-foreground sm:text-sm">This Month Revenue</p>
-            <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">₹{thisMonthRevenue.toLocaleString("en-IN")}</p>
+          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-muted-foreground">This Month Revenue</p>
+              <Badge variant="secondary">Apr 2026</Badge>
+            </div>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">₹{thisMonthRevenue.toLocaleString("en-IN")}</p>
             <p className="mt-1 text-xs text-muted-foreground">April 2026 collections</p>
           </Card>
 
-          <Card className="animate-fade-up p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
-            <p className="text-xs font-medium text-muted-foreground sm:text-sm">Completed Bookings</p>
-            <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">{completedBookings}</p>
+          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-muted-foreground">Completed Bookings</p>
+              <Badge variant="default">Paid</Badge>
+            </div>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">{completedBookings}</p>
             <p className="mt-1 text-xs text-muted-foreground">Payments successfully received</p>
           </Card>
 
-          <Card className="animate-fade-up p-4 transition-all hover:-translate-y-0.5 hover:shadow-md sm:p-5">
-            <p className="text-xs font-medium text-muted-foreground sm:text-sm">Pending Payments</p>
-            <p className="mt-3 text-2xl font-bold tracking-tight text-card-foreground">{pendingPayments}</p>
+          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm text-muted-foreground">Pending Payments</p>
+              <Badge variant="secondary">Pending</Badge>
+            </div>
+            <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">{pendingPayments}</p>
             <p className="mt-1 text-xs text-muted-foreground">Require collection follow-up</p>
           </Card>
         </div>
@@ -178,11 +191,9 @@ export default function EarningsPage() {
                     <td className="px-4 py-3.5 whitespace-nowrap">{row.date}</td>
                     <td className="px-4 py-3.5 whitespace-nowrap text-right font-semibold text-foreground">₹{row.amount.toLocaleString("en-IN")}</td>
                     <td className="px-4 py-3.5">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[row.paymentStatus]}`}
-                      >
+                      <Badge variant={statusVariants[row.paymentStatus]}>
                         {row.paymentStatus}
-                      </span>
+                      </Badge>
                     </td>
                   </tr>
                 ))}

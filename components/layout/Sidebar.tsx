@@ -74,7 +74,7 @@ export function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
   }, []);
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-background px-3 py-4 text-foreground">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-card px-3 py-4 text-foreground transition-colors duration-300">
       <div className={`mb-5 ${isCollapsed ? "md:flex md:justify-center" : "-ml-1"}`}>
         <Link href="/dashboard" className="inline-flex" onClick={onNavigate}>
           <Image
@@ -93,7 +93,7 @@ export function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
         <p className="mt-0.5 text-xs text-muted-foreground">{user?.agency || "Care Agency Dashboard"}</p>
       </div>
 
-      <div className="mb-4 h-px bg-border/70" />
+      <div className="mb-4 h-px bg-border" />
 
       <ul className="space-y-2">
         {navItems.map((item) => {
@@ -106,14 +106,14 @@ export function Sidebar({ onNavigate, isCollapsed = false }: SidebarProps) {
               <Link
                 href={item.href}
                 onClick={onNavigate}
-                className={`flex items-center gap-2.5 rounded-lg border-l-2 px-3 py-2 text-sm font-medium transition-all duration-200 ${item.isChild ? "ml-4" : ""} ${
+                className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300 ${item.isChild ? "ml-4" : ""} ${
                   isActive
-                    ? "border-primary bg-muted text-foreground shadow-sm"
+                    ? "bg-muted text-foreground ring-1 ring-border shadow-sm"
                     : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
                 title={isCollapsed ? item.label : undefined}
               >
-                <span className={`h-4 w-4 shrink-0 ${isActive ? "text-foreground" : "text-muted-foreground"}`}>
+                <span className={`h-4 w-4 shrink-0 ${isActive ? "text-primary" : "text-muted-foreground"}`}>
                   {item.icon}
                 </span>
                 <span className={`${isCollapsed ? "hidden" : "inline"}`}>

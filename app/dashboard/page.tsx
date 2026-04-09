@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { CalendarDays, CircleDollarSign, Clock3, Users } from "lucide-react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import StatsCard from "@/components/dashboard/StatsCard";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 type RecentBookingStatus = "Pending" | "Confirmed" | "In Progress";
@@ -59,10 +61,10 @@ const topServices = [
   },
 ];
 
-const statusStyles: Record<RecentBookingStatus, string> = {
-  Pending: "bg-muted text-muted-foreground ring-border",
-  Confirmed: "bg-primary/10 text-primary ring-primary/25",
-  "In Progress": "bg-card text-foreground ring-border",
+const statusVariants: Record<RecentBookingStatus, "secondary" | "default" | "outline"> = {
+  Pending: "secondary",
+  Confirmed: "default",
+  "In Progress": "outline",
 };
 
 export default function DashboardPage() {
@@ -71,45 +73,25 @@ export default function DashboardPage() {
       title: "Total Bookings",
       value: "128",
       subtitle: "+14 this week",
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="3" y="5" width="18" height="16" rx="2" />
-          <path d="M8 3v4M16 3v4M3 10h18" />
-        </svg>
-      ),
+      icon: <CalendarDays className="h-4.5 w-4.5" />,
     },
     {
       title: "Active Bookings",
       value: "47",
       subtitle: "11 ongoing now",
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 7v5l3 2" />
-        </svg>
-      ),
+      icon: <Clock3 className="h-4.5 w-4.5" />,
     },
     {
       title: "Total Providers",
       value: "29",
       subtitle: "16 available today",
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      ),
+      icon: <Users className="h-4.5 w-4.5" />,
     },
     {
       title: "Total Revenue",
       value: "₹3,48,000",
       subtitle: "+9.4% from last month",
-      icon: (
-        <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M6 3h12M9 8h8M8 8l5 5-5 5" />
-        </svg>
-      ),
+      icon: <CircleDollarSign className="h-4.5 w-4.5" />,
     },
   ];
 
@@ -167,19 +149,19 @@ export default function DashboardPage() {
 
   return (
     <LayoutWrapper>
-      <div className="p-4 space-y-6">
+      <div className="space-y-6">
         <div className="space-y-6">
           <div className="space-y-2">
             <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
               Overview
             </h1>
-            <p className="max-w-2xl text-sm text-gray-500 dark:text-gray-400 sm:text-base">
+            <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
               Homecare operations snapshot for bookings, providers, and revenue.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat, index) => (
+            {stats.map((stat) => (
               <StatsCard
                 key={stat.title}
                 title={stat.title}
@@ -202,7 +184,7 @@ export default function DashboardPage() {
             >
               <CardHeader className="flex flex-row items-center justify-between gap-3 p-5 sm:p-6">
                 <CardTitle className="text-xl font-semibold">Service Distribution</CardTitle>
-                <span className="text-sm text-gray-500 dark:text-gray-400">Top booked services</span>
+                <span className="text-sm text-muted-foreground">Top booked services</span>
               </CardHeader>
 
               <CardContent className="grid grid-cols-1 gap-3 p-5 pt-0 sm:grid-cols-3 sm:p-6 sm:pt-0 xl:grid-cols-1">
@@ -213,7 +195,7 @@ export default function DashboardPage() {
                   >
                     <p className="text-sm font-semibold text-card-foreground">{service.name}</p>
                     <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">{service.bookings}</p>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{service.note}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{service.note}</p>
                   </article>
                 ))}
               </CardContent>
@@ -231,7 +213,7 @@ export default function DashboardPage() {
             >
               <CardHeader className="flex flex-row items-center justify-between gap-3 p-5 sm:p-6">
                 <CardTitle className="text-xl font-semibold">Recent Bookings</CardTitle>
-                <span className="text-sm text-gray-500 dark:text-gray-400">Last 24 hours</span>
+                <span className="text-sm text-muted-foreground">Last 24 hours</span>
               </CardHeader>
 
               <CardContent className="space-y-3 p-5 pt-0 sm:p-6 sm:pt-0">
@@ -245,11 +227,9 @@ export default function DashboardPage() {
                       <p className="text-sm text-muted-foreground">{booking.service}</p>
                     </div>
 
-                    <span
-                      className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[booking.status]}`}
-                    >
+                    <Badge variant={statusVariants[booking.status]}>
                       {booking.status}
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </CardContent>

@@ -36,7 +36,7 @@ export function LayoutWrapper({
   }
 
   return (
-    <div className="h-auto min-h-dvh overflow-x-clip bg-background text-foreground md:flex">
+    <div className="min-h-dvh overflow-x-clip bg-background text-foreground transition-colors duration-300 md:flex">
       <button
         type="button"
         aria-label="Close sidebar overlay"
@@ -47,7 +47,7 @@ export function LayoutWrapper({
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 transform border-r border-border bg-background text-foreground shadow-[2px_0_10px_rgba(15,23,42,0.04)] transition-all duration-300 md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 transform border-r border-border bg-card text-foreground shadow-sm transition-all duration-300 md:static md:translate-x-0 ${
           isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } ${isDesktopSidebarCollapsed ? "md:w-20" : "md:w-72"}`}
       >
@@ -57,7 +57,7 @@ export function LayoutWrapper({
         />
       </aside>
 
-      <div className="flex h-auto min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <Header
           isSidebarCollapsed={isDesktopSidebarCollapsed}
           onMenuClick={() => setIsMobileSidebarOpen((current) => !current)}
@@ -65,8 +65,8 @@ export function LayoutWrapper({
             setIsDesktopSidebarCollapsed((current) => !current)
           }
         />
-        <main className="h-auto flex-1 overflow-x-clip px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-7">
-          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        <main className="flex-1 overflow-x-clip">
+          <div className="mx-auto w-full max-w-7xl space-y-6 p-4 md:p-6">{children}</div>
         </main>
       </div>
     </div>

@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 type BookingStatus = "Pending" | "Confirmed" | "In Progress" | "Completed";
 
@@ -133,11 +134,11 @@ const initialBookings: Booking[] = [
   },
 ];
 
-const statusStyles: Record<BookingStatus, string> = {
-  Pending: "bg-muted text-muted-foreground ring-border",
-  Confirmed: "bg-primary/10 text-primary ring-primary/25",
-  "In Progress": "bg-card text-foreground ring-border",
-  Completed: "bg-primary/15 text-primary ring-primary/30",
+const statusVariants: Record<BookingStatus, "secondary" | "default" | "outline"> = {
+  Pending: "secondary",
+  Confirmed: "default",
+  "In Progress": "outline",
+  Completed: "default",
 };
 
 export default function BookingsPage() {
@@ -224,11 +225,11 @@ export default function BookingsPage() {
       <section className="space-y-6">
         <div className="space-y-1.5">
           <h1 className="text-xl font-semibold tracking-tight text-foreground">Bookings</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Manage and assign service requests from one place.</p>
+          <p className="text-sm text-muted-foreground">Manage and assign service requests from one place.</p>
         </div>
 
         <Card className="p-4 transition-all duration-300 hover:shadow-md sm:p-6">
-          <p className="mb-3 text-sm font-medium text-gray-500 dark:text-gray-400">Filters</p>
+          <p className="mb-3 text-sm font-medium text-muted-foreground">Filters</p>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
             <div className="md:col-span-12">
               <input
@@ -294,11 +295,9 @@ export default function BookingsPage() {
             <div className="flex items-center justify-between gap-3">
               <div>
                 <h2 className="text-xl font-semibold tracking-tight text-foreground">Calendar Booking View</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Week overview for confirmed and pending bookings</p>
+                <p className="text-sm text-muted-foreground">Week overview for confirmed and pending bookings</p>
               </div>
-              <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-muted-foreground ring-1 ring-border">
-                Apr 2026
-              </span>
+              <Badge variant="outline">Apr 2026</Badge>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
@@ -311,20 +310,14 @@ export default function BookingsPage() {
                       : "border-border bg-background hover:bg-muted/40"
                   }`}
                 >
-                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Apr</p>
+                  <p className="text-xs font-medium text-muted-foreground">Apr</p>
                   <div className="mt-1 flex items-end justify-between gap-2">
                     <p className="text-lg font-semibold text-foreground">{day.day}</p>
-                    <span
-                      className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-semibold ${
-                        day.count > 0
-                          ? "bg-blue-600 text-white"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {day.count}
+                    <span className="inline-flex h-6 w-6 items-center justify-center">
+                      <Badge variant={day.count > 0 ? "default" : "secondary"}>{day.count}</Badge>
                     </span>
                   </div>
-                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                  <p className="mt-2 text-xs text-muted-foreground">
                     {day.count > 0 ? "Bookings scheduled" : "No bookings"}
                   </p>
                 </div>
@@ -352,7 +345,7 @@ export default function BookingsPage() {
                 {filteredBookings.map((booking, index) => (
                   <tr
                     key={booking.id}
-                    className={`border-b border-border/70 transition-colors hover:bg-muted/35 ${
+                    className={`border-b border-border/70 transition-colors duration-300 hover:bg-muted ${
                       index % 2 === 0 ? "bg-background" : "bg-muted/20"
                     }`}
                   >
@@ -371,11 +364,7 @@ export default function BookingsPage() {
                       )}
                     </td>
                     <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${statusStyles[booking.status]}`}
-                      >
-                        {booking.status}
-                      </span>
+                      <Badge variant={statusVariants[booking.status]}>{booking.status}</Badge>
                     </td>
                     <td className="px-4 py-4">
                       <Button
@@ -402,8 +391,8 @@ export default function BookingsPage() {
                   </svg>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold text-foreground">No bookings yet</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Try adjusting search or filters to see matching bookings.</p>
+                  <p className="text-sm font-semibold text-foreground">No data available</p>
+                  <p className="text-sm text-muted-foreground">Try adjusting search or filters to see matching bookings.</p>
                 </div>
               </div>
             </div>
@@ -413,10 +402,10 @@ export default function BookingsPage() {
 
       {activeBooking ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/45 p-4 transition-opacity duration-200">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl transition-all duration-200">
+          <Card className="w-full max-w-md p-6 shadow-xl transition-all duration-200">
             <h2 className="text-xl font-semibold text-foreground">Assign Provider</h2>
 
-            <div className="mt-4 space-y-2 rounded-xl border border-border bg-muted/35 p-4 text-sm">
+            <CardContent className="mt-4 space-y-2 rounded-xl border border-border bg-muted/35 p-4 text-sm">
               <p>
                 <span className="font-medium text-foreground">Patient Name:</span>{" "}
                 <span className="text-muted-foreground">{activeBooking.patientName}</span>
@@ -425,7 +414,7 @@ export default function BookingsPage() {
                 <span className="font-medium text-foreground">Service Type:</span>{" "}
                 <span className="text-muted-foreground">{activeBooking.serviceType}</span>
               </p>
-            </div>
+            </CardContent>
 
             <div className="mt-4">
               <label htmlFor="provider-select" className="mb-2 block text-sm font-medium text-foreground">
@@ -460,7 +449,7 @@ export default function BookingsPage() {
                 Confirm Assign
               </Button>
             </div>
-          </div>
+          </Card>
         </div>
       ) : null}
     </LayoutWrapper>
