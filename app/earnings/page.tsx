@@ -1,4 +1,7 @@
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import PageHeader from "@/components/dashboard/PageHeader";
+import SectionCard from "@/components/dashboard/SectionCard";
+import StatusBadge from "@/components/dashboard/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -89,9 +92,9 @@ const earningsData: EarningRow[] = [
   },
 ];
 
-const statusVariants: Record<PaymentStatus, "default" | "secondary"> = {
-  Paid: "default",
-  Pending: "secondary",
+const statusTones: Record<PaymentStatus, "success" | "warning"> = {
+  Paid: "success",
+  Pending: "warning",
 };
 
 const totalRevenue = earningsData.reduce((sum, row) => sum + row.amount, 0);
@@ -111,108 +114,114 @@ export default function EarningsPage() {
   return (
     <LayoutWrapper>
       <section className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Earnings &amp; Revenue</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Financial snapshot of completed homecare bookings and pending collections.
-          </p>
-        </div>
+        <PageHeader
+          eyebrow="Finance"
+          title="Earnings &amp; Revenue"
+          description="Financial snapshot of completed homecare bookings and pending collections."
+          badge={<Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">{earningsData.length} records</Badge>}
+        />
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm text-muted-foreground">Total Revenue</p>
-              <Badge variant="default">All time</Badge>
+          <Card className="p-0">
+            <div className="border-b border-border/70 px-5 py-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium text-muted-foreground">Total Revenue</p>
+                <Badge variant="default" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">All time</Badge>
+              </div>
             </div>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-foreground">₹{totalRevenue.toLocaleString("en-IN")}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Across all listed bookings</p>
+            <div className="space-y-2 p-5">
+              <p className="text-2xl font-semibold tracking-tight text-foreground">₹{totalRevenue.toLocaleString("en-IN")}</p>
+              <p className="text-xs text-muted-foreground">Across all listed bookings</p>
+            </div>
           </Card>
 
-          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm text-muted-foreground">This Month Revenue</p>
-              <Badge variant="secondary">Apr 2026</Badge>
+          <Card className="p-0">
+            <div className="border-b border-border/70 px-5 py-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium text-muted-foreground">This Month Revenue</p>
+                <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">Apr 2026</Badge>
+              </div>
             </div>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">₹{thisMonthRevenue.toLocaleString("en-IN")}</p>
-            <p className="mt-1 text-xs text-muted-foreground">April 2026 collections</p>
+            <div className="space-y-2 p-5">
+              <p className="text-2xl font-semibold tracking-tight text-foreground">₹{thisMonthRevenue.toLocaleString("en-IN")}</p>
+              <p className="text-xs text-muted-foreground">April 2026 collections</p>
+            </div>
           </Card>
 
-          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm text-muted-foreground">Completed Bookings</p>
-              <Badge variant="default">Paid</Badge>
+          <Card className="p-0">
+            <div className="border-b border-border/70 px-5 py-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium text-muted-foreground">Completed Bookings</p>
+                <Badge variant="default" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">Paid</Badge>
+              </div>
             </div>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">{completedBookings}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Payments successfully received</p>
+            <div className="space-y-2 p-5">
+              <p className="text-2xl font-semibold tracking-tight text-foreground">{completedBookings}</p>
+              <p className="text-xs text-muted-foreground">Payments successfully received</p>
+            </div>
           </Card>
 
-          <Card className="animate-fade-up p-4 transition-all hover:shadow-md">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm text-muted-foreground">Pending Payments</p>
-              <Badge variant="secondary">Pending</Badge>
+          <Card className="p-0">
+            <div className="border-b border-border/70 px-5 py-4">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium text-muted-foreground">Pending Payments</p>
+                <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">Pending</Badge>
+              </div>
             </div>
-            <p className="mt-2 text-2xl font-bold tracking-tight text-card-foreground">{pendingPayments}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Require collection follow-up</p>
+            <div className="space-y-2 p-5">
+              <p className="text-2xl font-semibold tracking-tight text-foreground">{pendingPayments}</p>
+              <p className="text-xs text-muted-foreground">Require collection follow-up</p>
+            </div>
           </Card>
         </div>
 
-        <Card className="p-4 sm:p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-card-foreground">Earnings Table</h2>
-            <span className="text-xs font-medium text-muted-foreground">8 records</span>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-left text-[13px] text-muted-foreground">
-              <thead>
-                <tr className="border-b border-border bg-muted/40 text-[11px] font-semibold text-foreground">
-                  <th className="px-4 py-3.5">Booking ID</th>
-                  <th className="px-4 py-3.5">Patient name</th>
-                  <th className="px-4 py-3.5">Service type</th>
-                  <th className="px-4 py-3.5">Provider name</th>
-                  <th className="px-4 py-3.5">Date</th>
-                  <th className="px-4 py-3.5 text-right">Amount</th>
-                  <th className="px-4 py-3.5">Payment status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {earningsData.map((row, index) => (
-                  <tr
-                    key={row.bookingId}
-                    className={`border-b border-border/70 transition-colors hover:bg-muted/30 ${
-                      index % 2 === 0 ? "bg-background" : "bg-muted/15"
-                    }`}
-                  >
-                    <td className="px-4 py-3.5 font-semibold text-foreground">{row.bookingId}</td>
-                    <td className="px-4 py-3.5 whitespace-nowrap">{row.patientName}</td>
-                    <td className="px-4 py-3.5 whitespace-nowrap">{row.serviceType}</td>
-                    <td className="px-4 py-3.5 whitespace-nowrap">{row.providerName}</td>
-                    <td className="px-4 py-3.5 whitespace-nowrap">{row.date}</td>
-                    <td className="px-4 py-3.5 whitespace-nowrap text-right font-semibold text-foreground">₹{row.amount.toLocaleString("en-IN")}</td>
-                    <td className="px-4 py-3.5">
-                      <Badge variant={statusVariants[row.paymentStatus]}>
-                        {row.paymentStatus}
-                      </Badge>
-                    </td>
+        <SectionCard title="Earnings Table" description="Revenue captured from completed homecare bookings" action={<Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">{earningsData.length} records</Badge>} bodyClassName="pt-5">
+          <div className="overflow-hidden rounded-3xl border border-border/70 bg-background">
+            <div className="overflow-x-auto">
+              <table className="min-w-full text-left text-[13px] text-muted-foreground">
+                <thead className="bg-muted/40 text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
+                  <tr>
+                    <th className="px-4 py-3.5">Booking ID</th>
+                    <th className="px-4 py-3.5">Patient name</th>
+                    <th className="px-4 py-3.5">Service type</th>
+                    <th className="px-4 py-3.5">Provider name</th>
+                    <th className="px-4 py-3.5">Date</th>
+                    <th className="px-4 py-3.5 text-right">Amount</th>
+                    <th className="px-4 py-3.5">Payment status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                </thead>
 
-        <Card className="p-5 sm:p-6">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-card-foreground">Recent Transactions</h2>
-            <span className="text-xs font-medium text-muted-foreground">Latest payouts</span>
+                <tbody>
+                  {earningsData.map((row, index) => (
+                    <tr
+                      key={row.bookingId}
+                      className={`border-b border-border/70 transition-colors hover:bg-muted/30 ${
+                        index % 2 === 0 ? "bg-background" : "bg-muted/15"
+                      }`}
+                    >
+                      <td className="px-4 py-3.5 font-semibold text-foreground">{row.bookingId}</td>
+                      <td className="px-4 py-3.5 whitespace-nowrap">{row.patientName}</td>
+                      <td className="px-4 py-3.5 whitespace-nowrap">{row.serviceType}</td>
+                      <td className="px-4 py-3.5 whitespace-nowrap">{row.providerName}</td>
+                      <td className="px-4 py-3.5 whitespace-nowrap">{row.date}</td>
+                      <td className="px-4 py-3.5 whitespace-nowrap text-right font-semibold text-foreground">₹{row.amount.toLocaleString("en-IN")}</td>
+                      <td className="px-4 py-3.5">
+                        <StatusBadge tone={statusTones[row.paymentStatus]}>{row.paymentStatus}</StatusBadge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
+        </SectionCard>
 
+        <SectionCard title="Recent Transactions" description="Latest payouts and settlement activity" action={<Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">Latest payouts</Badge>}>
           <div className="space-y-2.5">
             {recentTransactions.map((txn) => (
               <div
                 key={txn.id}
-                className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background p-3.5 transition-colors hover:bg-muted/20"
+                className="flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-background p-3.5 transition-colors hover:bg-muted/20"
               >
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-card-foreground">{txn.label}</p>
@@ -222,7 +231,7 @@ export default function EarningsPage() {
               </div>
             ))}
           </div>
-        </Card>
+        </SectionCard>
       </section>
     </LayoutWrapper>
   );

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
-import { getStoredUser } from "@/lib/local-auth";
+import { getStoredToken } from "@/lib/local-auth";
 
 export function LayoutWrapper({
   children,
@@ -17,14 +17,14 @@ export function LayoutWrapper({
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    const user = getStoredUser();
+    const token = getStoredToken();
 
-    if (!user) {
+    if (!token) {
       router.push("/login");
       return;
     }
 
-    setIsReady(true);
+    Promise.resolve().then(() => setIsReady(true));
   }, [router]);
 
   if (!isReady) {
@@ -36,18 +36,18 @@ export function LayoutWrapper({
   }
 
   return (
-    <div className="min-h-dvh overflow-x-clip bg-background text-foreground transition-colors duration-300 md:flex">
+    <div className="relative isolate min-h-dvh overflow-x-clip bg-transparent text-foreground transition-colors duration-300 md:flex">
       <button
         type="button"
         aria-label="Close sidebar overlay"
         onClick={() => setIsMobileSidebarOpen(false)}
-        className={`fixed inset-0 z-30 bg-foreground/35 transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-30 bg-foreground/30 backdrop-blur-[1px] transition-opacity duration-300 md:hidden ${
           isMobileSidebarOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
       />
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 transform border-r border-border bg-card text-foreground shadow-sm transition-all duration-300 md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-72 shrink-0 transform border-r border-border/70 bg-card/95 text-foreground shadow-[0_18px_50px_rgba(15,23,42,0.12)] backdrop-blur-xl transition-all duration-300 md:static md:translate-x-0 md:shadow-none ${
           isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } ${isDesktopSidebarCollapsed ? "md:w-20" : "md:w-72"}`}
       >
@@ -66,7 +66,7 @@ export function LayoutWrapper({
           }
         />
         <main className="flex-1 overflow-x-clip">
-          <div className="mx-auto w-full max-w-7xl space-y-6 p-4 md:p-6">{children}</div>
+          <div className="mx-auto w-full max-w-7xl space-y-6 px-4 py-5 sm:px-6 lg:px-8 lg:py-6">{children}</div>
         </main>
       </div>
     </div>

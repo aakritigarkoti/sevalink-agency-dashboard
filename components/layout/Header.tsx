@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { LogOut, Menu, PanelLeftClose, PanelLeftOpen, SunMedium, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { useTheme } from "@/components/theme/ThemeProvider";
-import { clearStoredUser, getStoredUser, type LocalUser } from "@/lib/local-auth";
+import { logout } from "@/lib/api";
+import { clearAuthSession, getStoredUser, type LocalUser } from "@/lib/local-auth";
 
 type HeaderProps = {
   onMenuClick: () => void;
@@ -19,86 +21,109 @@ export function Header({
   isSidebarCollapsed,
 }: HeaderProps) {
   const router = useRouter();
-  const { theme, toggleTheme, isReady } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [user, setUser] = useState<LocalUser | null>(null);
 
   useEffect(() => {
-    setUser(getStoredUser());
+    Promise.resolve().then(() => {
+      setUser(getStoredUser());
+    });
   }, []);
 
-  function handleLogout() {
-    clearStoredUser();
-    router.replace("/login");
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch {
+      // Local auth state should still be cleared if network logout fails.
+    } finally {
+      clearAuthSession();
+      router.push("/login");
+    }
   }
 
+  const userInitials = user?.name
+    ? user.name
+        .split(" ")
+        .slice(0, 2)
+        .map((part) => part[0])
+        .join("")
+        .toUpperCase()
+    : "SL";
+
   return (
-    <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-border bg-card/95 px-3 backdrop-blur transition-colors duration-300 sm:px-5 lg:px-8">
-      <div className="flex items-center gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label="Open sidebar menu"
-          onClick={onMenuClick}
-          className="active:scale-95 md:hidden"
-        >
-          <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M3 6h18M3 12h18M3 18h18" />
-          </svg>
-        </Button>
+    <header className="sticky top-0 z-20 border-b border-border/70 bg-background/80 backdrop-blur-xl transition-colors duration-300">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        <div className="flex min-w-0 items-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Open sidebar menu"
+            onClick={onMenuClick}
+            className="shrink-0 active:scale-95 md:hidden"
+          >
+            <Menu className="h-4.5 w-4.5" />
+          </Button>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label="Toggle desktop sidebar"
-          onClick={onDesktopSidebarToggle}
-          className="hidden md:inline-flex"
-        >
-          <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-            {isSidebarCollapsed ? <path d="M9 6l6 6-6 6" /> : <path d="M15 6l-6 6 6 6" />}
-          </svg>
-        </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Toggle desktop sidebar"
+            onClick={onDesktopSidebarToggle}
+            className="hidden shrink-0 md:inline-flex"
+          >
+            {isSidebarCollapsed ? <PanelLeftOpen className="h-4.5 w-4.5" /> : <PanelLeftClose className="h-4.5 w-4.5" />}
+          </Button>
 
-        <div className="leading-tight">
-          <h2 className="text-base font-semibold text-foreground sm:text-lg">Agency Dashboard</h2>
-          <p className="text-xs text-muted-foreground sm:text-sm">
-            Manage your agency operations smoothly
-          </p>
+          <div className="min-w-0 leading-tight">
+            <h2 className="truncate text-base font-semibold text-foreground sm:text-lg">Agency Dashboard</h2>
+            <p className="truncate text-xs text-muted-foreground sm:text-sm">
+              Care operations, bookings, and revenue in one place
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="flex items-center gap-3 sm:gap-4">
-        {user?.name ? <p className="hidden text-sm text-muted-foreground md:block">Welcome, {user.name}</p> : null}
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          aria-label="Toggle theme"
-          onClick={toggleTheme}
-          className="transition-colors duration-300"
-        >
-          {isReady && theme === "light" ? (
-            <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3c0 5 4 9 9 9-.07.27-.14.53-.21.79z" />
-            </svg>
-          )}
-        </Button>
-        <NotificationBell />
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={handleLogout}
-          className="h-9"
-        >
-          Logout
-        </Button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          {user?.name ? (
+            <div className="hidden items-center gap-3 rounded-full border border-border/70 bg-card/80 px-3 py-1.5 md:flex">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary ring-1 ring-primary/15">
+                {userInitials}
+              </div>
+              <div className="leading-tight">
+                <p className="text-sm font-medium text-foreground">{user.name}</p>
+                <p className="text-[11px] text-muted-foreground">{user.agency || "Agency workspace"}</p>
+              </div>
+            </div>
+          ) : null}
+
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label="Toggle theme"
+            onClick={() => {
+              const newTheme = theme === "dark" ? "light" : "dark";
+              setTheme(newTheme);
+              document.documentElement.classList.remove("light", "dark");
+              document.documentElement.classList.add(newTheme);
+            }}
+            className="shrink-0 transition-colors duration-300"
+          >
+            {theme === "light" ? <Moon className="h-4.5 w-4.5" /> : <SunMedium className="h-4.5 w-4.5" />}
+          </Button>
+          <NotificationBell />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            className="h-9 gap-2 px-3"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
+        </div>
       </div>
     </header>
   );

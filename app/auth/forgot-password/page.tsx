@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
       setIsSubmitted(true);
-    } catch (error) {
+    } catch {
       setErrors({
         submit: "An error occurred. Please try again.",
       });
@@ -86,14 +86,14 @@ export default function ForgotPasswordPage() {
                   <div>
                     <p className="text-sm font-semibold text-emerald-900">Check your email</p>
                     <p className="mt-1 text-xs text-emerald-800">
-                      We've sent password reset instructions to {email}
+                      We&apos;ve sent password reset instructions to {email}
                     </p>
                   </div>
                 </div>
               </div>
 
               <p className="text-sm text-gray-600 text-center">
-                Didn't receive an email? Check your spam folder or{" "}
+                Didn&apos;t receive an email? Check your spam folder or{" "}
                 <button
                   onClick={() => {
                     setIsSubmitted(false);

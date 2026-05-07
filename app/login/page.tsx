@@ -1,156 +1,176 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useToast } from "@/components/ui/toast";
-import { getStoredUser, setPendingPhone } from "@/lib/local-auth";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { API_BASE_URL } from "@/lib/api-config";
+import { setAuthSession } from "@/lib/local-auth";
 
 type LoginErrors = {
   phone?: string;
-  otp?: string;
+  password?: string;
+  submit?: string;
 };
 
 export default function LoginPage() {
   const router = useRouter();
-  const { addToast } = useToast();
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [isOtpStep, setIsOtpStep] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<LoginErrors>({});
 
-  useEffect(() => {
-    const user = getStoredUser();
-
-    if (user?.name && user.phone) {
-      router.replace("/dashboard");
-    }
-  }, [router]);
-
-  function handleSendOtp(event: FormEvent<HTMLFormElement>) {
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!/^\d{10}$/.test(phone)) {
-      setErrors({ phone: "Phone number must be 10 digits" });
+    const nextErrors: LoginErrors = {};
+    const cleanedPhone = phone.replace(/\D/g, "").slice(0, 10);
+
+    if (!/^\d{10}$/.test(cleanedPhone)) {
+      nextErrors.phone = "Please enter a valid 10-digit phone number.";
+    }
+
+    if (!password.trim()) {
+      nextErrors.password = "Password is required.";
+    }
+
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
       return;
     }
 
-    setErrors({});
-    setIsOtpStep(true);
-  }
+    try {
+      setLoading(true);
+      setErrors({});
 
-  async function handleVerifyOtp() {
-    if (!/^\d{6}$/.test(otp) || otp !== "123456") {
-      setErrors({ otp: "Invalid OTP" });
-      return;
-    }
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          phone: cleanedPhone,
+          password,
+        }),
+      });
 
-    setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
+      const data = (await res.json()) as {
+        accessToken?: string;
+        message?: string;
+        user?: {
+          role?: string;
+          name?: string;
+          phone?: string;
+          [key: string]: unknown;
+        };
+      };
 
-    const user = getStoredUser();
+      if (!res.ok) {
+        setErrors({ submit: data.message || "Login failed. Please try again." });
+        return;
+      }
 
-    addToast("Login Successful", "success");
+      if (!data.accessToken) {
+        setErrors({ submit: "Invalid server response. Missing access token." });
+        return;
+      }
 
-    if (user?.phone === phone && user.name) {
+      if (data.user?.role !== "homecare_agency") {
+        setErrors({ submit: "This account is not authorized as an agency user." });
+        return;
+      }
+
+      setAuthSession(data.accessToken, data.user ?? { phone: cleanedPhone });
       router.replace("/dashboard");
-    } else {
-      setPendingPhone(phone);
-      router.replace("/setup");
+    } catch (err) {
+      console.error(err);
+      setErrors({ submit: "Unable to connect. Please check your server and try again." });
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10 transition-colors duration-300 dark:bg-gray-950">
-      <div className="animate-auth-in w-full max-w-md rounded-2xl bg-white p-6 shadow-lg transition-all duration-300 dark:border dark:border-gray-800 dark:bg-gray-900 sm:p-8">
-        <div className="mb-7 text-center">
-          <Image src="/SevaLink-logo-r.png" alt="SevaLink" width={120} height={32} className="mx-auto" priority />
-          <h1 className="mt-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Welcome Back</h1>
-          <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400">Login with your phone number</p>
-        </div>
+    <div className="relative min-h-dvh overflow-hidden bg-gradient-to-b from-sky-50 via-white to-blue-50 px-4 py-10 sm:px-6">
+      <div className="pointer-events-none absolute inset-0 -z-0 bg-[radial-gradient(circle_at_18%_18%,rgba(186,230,253,0.55),transparent_42%),radial-gradient(circle_at_82%_12%,rgba(219,234,254,0.5),transparent_40%)]" />
 
-        <form onSubmit={handleSendOtp} className="space-y-4">
-          <div>
-            <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Phone Number
-            </label>
-            <input
-              id="phone"
-              type="tel"
-              inputMode="numeric"
-              value={phone}
-              onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 10))}
-              placeholder="Enter 10-digit phone number"
-              disabled={isLoading || isOtpStep}
-              className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 dark:text-gray-100 ${
-                errors.phone
-                  ? "border-rose-300 bg-rose-50 focus:ring-2 focus:ring-rose-500 dark:border-rose-500/60 dark:bg-rose-500/10"
-                  : "border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
-              } disabled:bg-gray-100 dark:disabled:bg-gray-800`}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100dvh-5rem)] w-full max-w-md items-center">
+        <Card className="w-full rounded-3xl border-border/70 bg-card/95 p-6 shadow-2xl backdrop-blur sm:p-8">
+          <div className="mb-8 text-center">
+            <Image
+              src="/SevaLink-logo-r.png"
+              alt="SevaLink"
+              width={132}
+              height={36}
+              className="mx-auto"
+              priority
             />
-            {errors.phone ? <p className="mt-1 text-xs text-rose-600">{errors.phone}</p> : null}
+            <h1 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">
+              Agency Sign In
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Login to manage bookings, providers, and operations.
+            </p>
           </div>
 
-          {!isOtpStep ? (
-            <button
-              type="submit"
-              className="h-10 w-full rounded-lg bg-blue-600 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-            >
-              Send OTP
-            </button>
-          ) : (
-            <>
-              <div>
-                <label htmlFor="otp" className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  OTP
-                </label>
-                <input
-                  id="otp"
-                  type="text"
-                  inputMode="numeric"
-                  value={otp}
-                  onChange={(event) => setOtp(event.target.value.replace(/\D/g, "").slice(0, 6))}
-                  placeholder="Enter 6-digit OTP"
-                  className={`w-full rounded-lg border px-4 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 dark:text-gray-100 ${
-                    errors.otp
-                      ? "border-rose-300 bg-rose-50 focus:ring-2 focus:ring-rose-500 dark:border-rose-500/60 dark:bg-rose-500/10"
-                      : "border-gray-300 bg-white focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
-                  }`}
-                />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Demo OTP: 123456</p>
-                {errors.otp ? <p className="mt-1 text-xs text-rose-600">{errors.otp}</p> : null}
+          <form onSubmit={handleLogin} className="space-y-4">
+            {errors.submit ? (
+              <div className="rounded-xl border border-rose-300/70 bg-rose-50 px-3 py-2.5 text-sm font-medium text-rose-700 dark:border-rose-500/40 dark:bg-rose-500/10 dark:text-rose-300">
+                {errors.submit}
               </div>
+            ) : null}
 
-              <button
-                type="button"
-                onClick={handleVerifyOtp}
-                disabled={isLoading}
-                className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-blue-600 text-sm font-medium text-white transition-all duration-300 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-blue-500 dark:hover:bg-blue-600"
-              >
-                {isLoading ? (
-                  <>
-                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" opacity="0.3" />
-                      <path d="M12 2a10 10 0 0 1 10 10" strokeLinecap="round" />
-                    </svg>
-                    <span>Verifying...</span>
-                  </>
-                ) : (
-                  "Verify OTP"
-                )}
-              </button>
-            </>
-          )}
-        </form>
+            <div className="space-y-1.5">
+              <label htmlFor="phone" className="text-sm font-medium text-foreground">
+                Phone Number
+              </label>
+              <Input
+                id="phone"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel"
+                placeholder="Enter 10-digit phone number"
+                value={phone}
+                onChange={(event) => setPhone(event.target.value.replace(/\D/g, "").slice(0, 10))}
+                disabled={loading}
+                className="h-11 rounded-xl bg-background/70 px-3"
+              />
+              {errors.phone ? <p className="text-xs font-medium text-rose-600">{errors.phone}</p> : null}
+            </div>
 
-        <p className="mt-5 text-center text-sm text-gray-600 dark:text-gray-400">
-          New agency?{" "}
-          <Link href="/signup" className="font-medium text-blue-600 transition-colors hover:text-blue-700">
-            Create account
-          </Link>
-        </p>
+            <div className="space-y-1.5">
+              <label htmlFor="password" className="text-sm font-medium text-foreground">
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                disabled={loading}
+                className="h-11 rounded-xl bg-background/70 px-3"
+              />
+              {errors.password ? <p className="text-xs font-medium text-rose-600">{errors.password}</p> : null}
+            </div>
+
+            <Button type="submit" disabled={loading} className="h-11 w-full rounded-xl text-sm font-semibold">
+              {loading ? "Signing in..." : "Login"}
+            </Button>
+          </form>
+
+          <div className="mt-6 flex items-center justify-between gap-3 text-sm">
+            <Link href="/auth/forgot-password" className="text-muted-foreground transition-colors hover:text-foreground">
+              Forgot password?
+            </Link>
+            <p className="text-xs text-muted-foreground">Need access? Contact your administrator.</p>
+          </div>
+        </Card>
       </div>
     </div>
   );

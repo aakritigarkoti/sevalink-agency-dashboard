@@ -2,9 +2,13 @@
 
 import { useMemo, useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import PageHeader from "@/components/dashboard/PageHeader";
+import SectionCard from "@/components/dashboard/SectionCard";
+import StatusBadge from "@/components/dashboard/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 type BookingStatus = "Pending" | "Confirmed" | "In Progress" | "Completed";
 
@@ -134,11 +138,11 @@ const initialBookings: Booking[] = [
   },
 ];
 
-const statusVariants: Record<BookingStatus, "secondary" | "default" | "outline"> = {
-  Pending: "secondary",
-  Confirmed: "default",
-  "In Progress": "outline",
-  Completed: "default",
+const statusTones: Record<BookingStatus, "warning" | "success" | "info" | "neutral"> = {
+  Pending: "warning",
+  Confirmed: "success",
+  "In Progress": "info",
+  Completed: "neutral",
 };
 
 export default function BookingsPage() {
@@ -223,21 +227,22 @@ export default function BookingsPage() {
   return (
     <LayoutWrapper>
       <section className="space-y-6">
-        <div className="space-y-1.5">
-          <h1 className="text-xl font-semibold tracking-tight text-foreground">Bookings</h1>
-          <p className="text-sm text-muted-foreground">Manage and assign service requests from one place.</p>
-        </div>
+        <PageHeader
+          eyebrow="Operations"
+          title="Bookings"
+          description="Manage and assign service requests from one place."
+          badge={<Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">{filteredBookings.length} visible</Badge>}
+        />
 
-        <Card className="p-4 transition-all duration-300 hover:shadow-md sm:p-6">
-          <p className="mb-3 text-sm font-medium text-muted-foreground">Filters</p>
+        <SectionCard title="Filters" description="Search, narrow, and reset booking requests" bodyClassName="space-y-6 pt-5">
           <div className="grid grid-cols-1 gap-3 md:grid-cols-12">
             <div className="md:col-span-12">
-              <input
+              <Input
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Search by patient name..."
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 placeholder:text-muted-foreground focus:ring-2"
+                className="h-11 rounded-2xl bg-background px-4 text-sm"
               />
             </div>
 
@@ -245,7 +250,7 @@ export default function BookingsPage() {
               <select
                 value={statusFilter}
                 onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
+                className="h-11 w-full rounded-2xl border border-border bg-background px-4 text-sm text-foreground outline-none ring-ring/50 transition-colors focus:ring-2"
               >
                 <option value="All">All Statuses</option>
                 <option value="Pending">Pending</option>
@@ -259,7 +264,7 @@ export default function BookingsPage() {
               <select
                 value={serviceFilter}
                 onChange={(event) => setServiceFilter(event.target.value as ServiceFilter)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
+                className="h-11 w-full rounded-2xl border border-border bg-background px-4 text-sm text-foreground outline-none ring-ring/50 transition-colors focus:ring-2"
               >
                 {serviceFilterOptions.map((service) => (
                   <option key={service} value={service}>
@@ -270,52 +275,44 @@ export default function BookingsPage() {
             </div>
 
             <div className="md:col-span-8 lg:col-span-3">
-              <input
+              <Input
                 type="date"
                 value={dateFilter}
                 onChange={(event) => setDateFilter(event.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
+                className="h-11 rounded-2xl bg-background px-4 text-sm"
               />
             </div>
 
             <div className="md:col-span-4 lg:col-span-1">
-              <Button
-                onClick={resetFilters}
-                variant="secondary"
-                className="w-full"
-              >
+              <Button onClick={resetFilters} variant="secondary" className="h-11 w-full rounded-2xl">
                 Reset
               </Button>
             </div>
           </div>
 
-          <div className="my-6 h-px bg-border" />
-
-          <div className="mb-6 rounded-2xl border border-border bg-muted/20 p-4 transition-all duration-300 hover:shadow-md sm:p-5">
+          <div className="rounded-3xl border border-border/70 bg-muted/20 p-4 sm:p-5">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-semibold tracking-tight text-foreground">Calendar Booking View</h2>
+                <h2 className="text-lg font-semibold tracking-tight text-foreground">Calendar Booking View</h2>
                 <p className="text-sm text-muted-foreground">Week overview for confirmed and pending bookings</p>
               </div>
-              <Badge variant="outline">Apr 2026</Badge>
+              <Badge variant="outline" className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold">Apr 2026</Badge>
             </div>
 
             <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7">
               {calendarDays.map((day) => (
                 <div
                   key={day.day}
-                  className={`rounded-xl border p-3 transition-all duration-300 ${
+                  className={`rounded-2xl border p-3 transition-all duration-300 ${
                     day.count > 0
-                      ? "border-primary/20 bg-primary/5 hover:shadow-md"
-                      : "border-border bg-background hover:bg-muted/40"
+                      ? "border-primary/20 bg-primary/5 hover:-translate-y-0.5 hover:shadow-md"
+                      : "border-border/70 bg-background hover:-translate-y-0.5 hover:bg-muted/40"
                   }`}
                 >
                   <p className="text-xs font-medium text-muted-foreground">Apr</p>
                   <div className="mt-1 flex items-end justify-between gap-2">
                     <p className="text-lg font-semibold text-foreground">{day.day}</p>
-                    <span className="inline-flex h-6 w-6 items-center justify-center">
-                      <Badge variant={day.count > 0 ? "default" : "secondary"}>{day.count}</Badge>
-                    </span>
+                    <StatusBadge tone={day.count > 0 ? "success" : "neutral"}>{day.count}</StatusBadge>
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
                     {day.count > 0 ? "Bookings scheduled" : "No bookings"}
@@ -326,63 +323,64 @@ export default function BookingsPage() {
           </div>
 
           {filteredBookings.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="min-w-full text-left text-[13px] text-muted-foreground">
-              <thead>
-                <tr className="border-b border-border bg-muted/40 text-[11px] font-semibold text-foreground">
-                  <th className="px-4 py-3.5">Patient name</th>
-                  <th className="px-4 py-3.5">Service type</th>
-                  <th className="px-4 py-3.5">Duration</th>
-                  <th className="px-4 py-3.5">Date &amp; time</th>
-                  <th className="px-4 py-3.5 text-right">Price</th>
-                  <th className="px-4 py-3.5">Assigned provider</th>
-                  <th className="px-4 py-3.5">Status</th>
-                  <th className="px-4 py-3.5">Action</th>
-                </tr>
-              </thead>
+            <div className="overflow-hidden rounded-3xl border border-border/70 bg-background">
+              <div className="overflow-x-auto">
+                <table className="min-w-full text-left text-[13px] text-muted-foreground">
+                  <thead className="bg-muted/40 text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
+                    <tr>
+                      <th className="px-4 py-3.5">Patient name</th>
+                      <th className="px-4 py-3.5">Service type</th>
+                      <th className="px-4 py-3.5">Duration</th>
+                      <th className="px-4 py-3.5">Date &amp; time</th>
+                      <th className="px-4 py-3.5 text-right">Price</th>
+                      <th className="px-4 py-3.5">Assigned provider</th>
+                      <th className="px-4 py-3.5">Status</th>
+                      <th className="px-4 py-3.5">Action</th>
+                    </tr>
+                  </thead>
 
-              <tbody>
-                {filteredBookings.map((booking, index) => (
-                  <tr
-                    key={booking.id}
-                    className={`border-b border-border/70 transition-colors duration-300 hover:bg-muted ${
-                      index % 2 === 0 ? "bg-background" : "bg-muted/20"
-                    }`}
-                  >
-                    <td className="px-4 py-4 font-medium text-foreground">
-                      {booking.patientName}
-                    </td>
-                    <td className="px-4 py-4">{booking.serviceType}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{booking.duration}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">{booking.dateTime}</td>
-                    <td className="px-4 py-4 whitespace-nowrap text-right font-semibold text-foreground">{booking.price}</td>
-                    <td className="px-4 py-4 whitespace-nowrap">
-                      {booking.assignedProvider ? (
-                        <span className="font-medium text-foreground">{booking.assignedProvider}</span>
-                      ) : (
-                        <span className="text-muted-foreground">Not Assigned</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-4">
-                      <Badge variant={statusVariants[booking.status]}>{booking.status}</Badge>
-                    </td>
-                    <td className="px-4 py-4">
-                      <Button
-                        onClick={() => openAssignModal(booking.id)}
-                        disabled={Boolean(booking.assignedProvider)}
-                        size="sm"
-                        variant={booking.assignedProvider ? "secondary" : "default"}
+                  <tbody>
+                    {filteredBookings.map((booking, index) => (
+                      <tr
+                        key={booking.id}
+                        className={`border-b border-border/70 transition-colors duration-300 hover:bg-muted/30 ${
+                          index % 2 === 0 ? "bg-background" : "bg-muted/15"
+                        }`}
                       >
-                        {booking.assignedProvider ? "Assigned" : "Assign Provider"}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        <td className="px-4 py-4 font-medium text-foreground">{booking.patientName}</td>
+                        <td className="px-4 py-4 whitespace-nowrap">{booking.serviceType}</td>
+                        <td className="px-4 py-4 whitespace-nowrap">{booking.duration}</td>
+                        <td className="px-4 py-4 whitespace-nowrap">{booking.dateTime}</td>
+                        <td className="px-4 py-4 whitespace-nowrap text-right font-semibold text-foreground">{booking.price}</td>
+                        <td className="px-4 py-4 whitespace-nowrap">
+                          {booking.assignedProvider ? (
+                            <span className="font-medium text-foreground">{booking.assignedProvider}</span>
+                          ) : (
+                            <span className="text-muted-foreground">Not Assigned</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-4">
+                          <StatusBadge tone={statusTones[booking.status]}>{booking.status}</StatusBadge>
+                        </td>
+                        <td className="px-4 py-4">
+                          <Button
+                            onClick={() => openAssignModal(booking.id)}
+                            disabled={Boolean(booking.assignedProvider)}
+                            size="sm"
+                            variant={booking.assignedProvider ? "secondary" : "default"}
+                            className="rounded-full"
+                          >
+                            {booking.assignedProvider ? "Assigned" : "Assign Provider"}
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           ) : (
-            <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-12 text-center">
+            <div className="flex min-h-[280px] items-center justify-center rounded-3xl border border-dashed border-border bg-muted/20 px-6 py-12 text-center">
               <div className="max-w-sm space-y-3">
                 <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-background text-muted-foreground ring-1 ring-border">
                   <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
@@ -397,34 +395,37 @@ export default function BookingsPage() {
               </div>
             </div>
           )}
-        </Card>
+        </SectionCard>
       </section>
 
       {activeBooking ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/45 p-4 transition-opacity duration-200">
-          <Card className="w-full max-w-md p-6 shadow-xl transition-all duration-200">
-            <h2 className="text-xl font-semibold text-foreground">Assign Provider</h2>
+          <Card className="w-full max-w-md overflow-hidden p-0 shadow-2xl transition-all duration-200">
+            <div className="border-b border-border/70 px-6 py-4">
+              <h2 className="text-lg font-semibold text-foreground">Assign Provider</h2>
+              <p className="text-sm text-muted-foreground">Review the request and select an available provider.</p>
+            </div>
 
-            <CardContent className="mt-4 space-y-2 rounded-xl border border-border bg-muted/35 p-4 text-sm">
-              <p>
-                <span className="font-medium text-foreground">Patient Name:</span>{" "}
-                <span className="text-muted-foreground">{activeBooking.patientName}</span>
-              </p>
-              <p>
-                <span className="font-medium text-foreground">Service Type:</span>{" "}
-                <span className="text-muted-foreground">{activeBooking.serviceType}</span>
-              </p>
-            </CardContent>
+            <CardContent className="space-y-2 p-6 text-sm">
+              <div className="rounded-2xl border border-border/70 bg-muted/35 p-4">
+                <p>
+                  <span className="font-medium text-foreground">Patient Name:</span>{" "}
+                  <span className="text-muted-foreground">{activeBooking.patientName}</span>
+                </p>
+                <p className="mt-2">
+                  <span className="font-medium text-foreground">Service Type:</span>{" "}
+                  <span className="text-muted-foreground">{activeBooking.serviceType}</span>
+                </p>
+              </div>
 
-            <div className="mt-4">
-              <label htmlFor="provider-select" className="mb-2 block text-sm font-medium text-foreground">
+              <label htmlFor="provider-select" className="block pt-2 text-sm font-medium text-foreground">
                 Select Provider
               </label>
               <select
                 id="provider-select"
                 value={selectedProvider}
                 onChange={(event) => setSelectedProvider(event.target.value)}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none ring-ring/50 focus:ring-2"
+                className="h-11 w-full rounded-2xl border border-border bg-background px-4 text-sm text-foreground outline-none ring-ring/50 transition-colors focus:ring-2"
               >
                 <option value="">Choose a provider</option>
                 {providerOptions.map((provider) => (
@@ -433,22 +434,16 @@ export default function BookingsPage() {
                   </option>
                 ))}
               </select>
-            </div>
 
-            <div className="mt-6 flex justify-end gap-3">
-              <Button
-                onClick={closeAssignModal}
-                variant="secondary"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleConfirmAssign}
-                disabled={!selectedProvider}
-              >
-                Confirm Assign
-              </Button>
-            </div>
+              <div className="mt-6 flex justify-end gap-3">
+                <Button onClick={closeAssignModal} variant="secondary">
+                  Cancel
+                </Button>
+                <Button onClick={handleConfirmAssign} disabled={!selectedProvider}>
+                  Confirm Assign
+                </Button>
+              </div>
+            </CardContent>
           </Card>
         </div>
       ) : null}

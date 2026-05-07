@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react";
 import LayoutWrapper from "@/components/layout/LayoutWrapper";
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
 type RequestStatus = "Pending" | "Confirmed" | "Rejected";
@@ -164,23 +165,15 @@ export default function PendingRequestsPage() {
         </div>
 
         <Card className="rounded-xl border-border p-4 shadow-sm transition-all hover:shadow-md sm:p-5">
-          <div className="flex flex-wrap items-center gap-2">
-            {filterOptions.map((option) => {
-              const isActive = statusFilter === option;
-
-              return (
-                <Button
-                  key={option}
-                  type="button"
-                  onClick={() => setStatusFilter(option)}
-                  size="sm"
-                  variant={isActive ? "default" : "secondary"}
-                >
+          <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as StatusFilter)} className="w-full sm:w-auto">
+            <TabsList className="grid w-full grid-cols-4 sm:w-auto sm:inline-flex">
+              {filterOptions.map((option) => (
+                <TabsTrigger key={option} value={option}>
                   {option}
-                </Button>
-              );
-            })}
-          </div>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
         </Card>
 
         {filteredRequests.length > 0 ? (

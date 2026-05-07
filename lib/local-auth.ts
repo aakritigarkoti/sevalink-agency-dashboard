@@ -1,12 +1,15 @@
 export type LocalUser = {
-  name: string;
-  phone: string;
+  role?: string;
+  name?: string;
+  phone?: string;
+  password?: string;
   agency?: string;
   location?: string;
+  [key: string]: unknown;
 };
 
 const USER_STORAGE_KEY = "user";
-const PENDING_PHONE_STORAGE_KEY = "pendingPhone";
+const TOKEN_STORAGE_KEY = "token";
 
 export function getStoredUser(): LocalUser | null {
   if (typeof window === "undefined") {
@@ -20,18 +23,13 @@ export function getStoredUser(): LocalUser | null {
   }
 
   try {
-    const parsed = JSON.parse(rawUser) as Partial<LocalUser>;
+    const parsed = JSON.parse(rawUser);
 
-    if (typeof parsed.name !== "string" || typeof parsed.phone !== "string") {
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
       return null;
     }
 
-    return {
-      name: parsed.name,
-      phone: parsed.phone,
-      agency: typeof parsed.agency === "string" ? parsed.agency : undefined,
-      location: typeof parsed.location === "string" ? parsed.location : undefined,
-    };
+    return parsed as LocalUser;
   } catch {
     return null;
   }
@@ -45,35 +43,36 @@ export function setStoredUser(user: LocalUser) {
   window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
 }
 
+export function getStoredToken(): string | null {
+  if (typeof window !== "undefined") {
+    return localStorage.getItem("token");
+  }
+
+  return null;
+}
+
+export function setAuthSession(accessToken: string, user: LocalUser) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(TOKEN_STORAGE_KEY, accessToken);
+  window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+}
+
 export function clearStoredUser() {
   if (typeof window === "undefined") {
     return;
   }
 
   window.localStorage.removeItem(USER_STORAGE_KEY);
-  window.localStorage.removeItem(PENDING_PHONE_STORAGE_KEY);
 }
 
-export function setPendingPhone(phone: string) {
+export function clearAuthSession() {
   if (typeof window === "undefined") {
     return;
   }
 
-  window.localStorage.setItem(PENDING_PHONE_STORAGE_KEY, phone);
-}
-
-export function getPendingPhone() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  return window.localStorage.getItem(PENDING_PHONE_STORAGE_KEY);
-}
-
-export function clearPendingPhone() {
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  window.localStorage.removeItem(PENDING_PHONE_STORAGE_KEY);
+  window.localStorage.removeItem(TOKEN_STORAGE_KEY);
+  window.localStorage.removeItem(USER_STORAGE_KEY);
 }

@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NotificationsProvider } from "@/components/notifications/NotificationContext";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import { ToastProvider } from "@/components/ui/toast";
 import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
@@ -29,14 +28,33 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      suppressHydrationWarning
+      className={`light ${geistSans.variable} ${geistMono.variable} antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var theme = localStorage.getItem('theme');
+                  if (theme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                  } else {
+                    document.documentElement.classList.add('light');
+                    document.documentElement.classList.remove('dark');
+                  }
+                } catch (e) {}
+              })()
+            `,
+          }}
+        />
+      </head>
       <body className="flex min-h-dvh flex-col bg-background text-foreground transition-colors duration-300">
         <ThemeProvider>
-          <ToastProvider>
-            <NotificationsProvider>{children}</NotificationsProvider>
-            <Toaster position="top-right" richColors />
-          </ToastProvider>
+          <NotificationsProvider>{children}</NotificationsProvider>
+          <Toaster position="top-right" richColors />
         </ThemeProvider>
       </body>
     </html>

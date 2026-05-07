@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useMemo } from "react";
+import { ThemeProvider as NextThemesProvider, useTheme as useNextTheme } from "next-themes";
 
 type Theme = "light" | "dark";
 
@@ -13,48 +14,38 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-function applyThemeClass(theme: Theme) {
-  if (typeof document === "undefined") {
-    return;
-  }
-
-  document.documentElement.classList.toggle("dark", theme === "dark");
-}
-
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const savedTheme = window.localStorage.getItem("theme");
-    const resolvedTheme: Theme = savedTheme === "dark" ? "dark" : "light";
-
-    setThemeState(resolvedTheme);
-    applyThemeClass(resolvedTheme);
-    setIsReady(true);
-  }, []);
+function ThemeContextBridge({ children }: { children: React.ReactNode }) {
+  const { theme, setTheme } = useNextTheme();
+  const activeTheme: Theme = theme === "dark" ? "dark" : "light";
+  const isReady = theme === "light" || theme === "dark";
 
   const value = useMemo<ThemeContextValue>(
     () => ({
-      theme,
+      theme: activeTheme,
       isReady,
-      setTheme: (nextTheme) => {
-        setThemeState(nextTheme);
-        window.localStorage.setItem("theme", nextTheme);
-        applyThemeClass(nextTheme);
-      },
+      setTheme: (nextTheme) => setTheme(nextTheme),
       toggleTheme: () => {
-        const nextTheme: Theme = theme === "light" ? "dark" : "light";
-
-        setThemeState(nextTheme);
-        window.localStorage.setItem("theme", nextTheme);
-        applyThemeClass(nextTheme);
+        setTheme(activeTheme === "light" ? "dark" : "light");
       },
     }),
-    [theme, isReady],
+    [activeTheme, isReady, setTheme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem={false}
+      enableColorScheme={false}
+      storageKey="theme"
+    >
+      <ThemeContextBridge>{children}</ThemeContextBridge>
+    </NextThemesProvider>
+  );
 }
 
 export function useTheme() {

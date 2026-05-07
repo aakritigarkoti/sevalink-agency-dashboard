@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SevaLink Agency Dashboard
 
-## Getting Started
+A comprehensive management portal for healthcare agencies to manage their providers, track bookings, and monitor financial performance within the SevaLink ecosystem.
 
-First, run the development server:
+## Project Overview
+The SevaLink Agency Dashboard is a React-based web application built with Next.js. It serves as the central hub for agencies to manage their operations, including provider onboarding, profile management, and service distribution tracking.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Features Implemented
+- **📊 Real-time Dashboard**: Overview of operational stats (Total/Active Bookings, Provider Count) and financial snapshots.
+- **👨‍⚕️ Provider Management**: Complete lifecycle management for healthcare providers (Add, Edit, View Details, and Status tracking).
+- **💼 Agency Profile**: Update and manage agency-specific details including registration numbers, GST, and contact information.
+- **💰 Financial Tracking**: Automated calculation of earnings after platform commission (12%) and wallet balance monitoring.
+- **📅 Booking Overview**: Track recent booking requests with status indicators (Pending, Confirmed, In Progress).
+- **🔐 Secure Authentication**: JWT-based authentication with persistent sessions and secure logout.
+
+## Tech Stack
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/UI
+- **Icons**: Lucide React
+- **State/Data**: Fetch API with custom Auth wrappers
+- **Notifications**: Sonner
+
+## Setup Instructions
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or pnpm
+
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Sevalinkcare/sevalink-agency-dashboard.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up environment variables (see below).
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Environment Variables
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_API_URL=https://your-api-endpoint.com
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Folder Structure
+- `app/`: Next.js App Router pages and layouts.
+- `components/`: Reusable UI components (shadcn) and feature-specific components (dashboard, providers, layout).
+- `lib/`: Core logic including API integration (`api.ts`), authentication (`local-auth.ts`), and configurations.
+- `public/`: Static assets.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Current Status
+The project is in **Active Development (Internship Phase)**. Core agency and provider modules are fully integrated with the backend API. Financial modules use a mix of real data and simulated calculations for preview.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+© 2024 SevaLink. All rights reserved.
